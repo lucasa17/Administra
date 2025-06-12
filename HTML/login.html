@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entrar - Adiministra</title>
+</head>
+<body>
+
+            <form action="../PHP/login.php" method="post" name="form" id="form">
+    
+                <input type="text" name="txtemail" placeholder="EMAIL" id="iemail" oninput="clearCpf()">
+
+                <input type="text" name="txtcpf" placeholder="CPF" id="icpf" maxlength="14" oninput="mascara_cpf();clearEmail()">
+
+                <input type="password" name="txtpassword" id="isenha" placeholder="SENHA"> <br>
+
+                <label for="imudarSenha" class="grayText" onclick="mostrarSenha()">
+                    <input type="checkbox" name="mudarSenha" id="imudarSenha" class="mudarSenha" onclick="mostrarSenha()">
+                    Mostrar senha
+                </label>
+                <br>
+                
+                <input type="button" name="envia" value="ENTRAR" class="enviaBotao" onclick="validateForm()">    
+
+                <p class="grayText">Não tem uma conta? <a href="cadastro.html" class="link">Cadastre-se</a> </p>
+                
+            </form> 
+
+    <script>
+
+        function mostrarSenha(){
+
+            if(document.getElementById("imudarSenha").checked){
+
+                document.getElementById("isenha").type =  "text";
+
+            }
+            else{
+
+                document.getElementById("isenha").type =  "password";
+
+            }
+
+        }
+
+        function mascara_cpf(){
+
+            var cpf = document.getElementById('icpf');
+            cpf.value = cpf.value.replace(/[^\d.-]/g, '');
+
+                if(cpf.value.length == 3 || cpf.value.length == 7){
+
+                    cpf.value += ".";
+
+                } 
+                else if (cpf.value.length == 11) {
+
+                    cpf.value += "-";
+
+                }  
+
+        }
+
+        function clearCpf(){
+
+            var cpf = document.getElementById('icpf');
+
+            cpf.value = "";
+
+        }
+
+        function clearEmail(){
+
+            var email = document.getElementById('iemail');
+
+            email.value = "";
+
+        }
+
+        function validateForm(){
+
+            var email = document.forms["form"]["txtemail"].value;
+            var cpf = document.forms["form"]["txtcpf"].value;
+            var senha = document.forms["form"]["txtpassword"].value;
+            var isFilled = false;
+
+            if((email == null || email == "") && (cpf == null || cpf == "")){
+
+                document.getElementById("iemail").style.borderColor = "red";
+                document.getElementById("errorEmail").style.display = "block";
+
+            }
+
+            if((email == null || email == "") && (cpf == null || cpf == "")){
+
+                document.getElementById("iemail").style.borderColor = "red";
+                document.getElementById("errorEmail").style.display = "block";
+
+            }
+            if((cpf == null || cpf == "") && (email == null || email == "") ){
+
+                document.getElementById("icpf").style.borderColor = "red";
+                document.getElementById("errorCpf").style.display = "block";
+
+            }
+            if(senha == null || senha == ""){
+
+                document.getElementById("isenha").style.borderColor = "red";
+                document.getElementById("errorPassword").style.display = "block";
+
+            }
+            if((cpf != null && cpf != "") || (email !== null && email !== "")){
+
+                isFilled = true;
+                console.log(isFilled)
+
+            }
+
+            if(senha != null && senha != "" && isFilled == true){
+
+                document.getElementById("form").submit();
+
+            }
+
+        }
+
+    </script>
+
+</body>
+</html>
