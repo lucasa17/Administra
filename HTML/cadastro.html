@@ -1,72 +1,56 @@
+<!--HTML -->
 <!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Cadastro - Administra</title>
-
+<html>
+<head> 
+    <link rel="stylesheet" type="text/css" href="css_cadastro.css" media="screen" /> 
 </head>
-<body>
-                   
-            <h1>CADASTRE-SE</h1>
-    
-            <form action="../PHP/cadastro.php" method="post">
-    
-                
-                <label for="iuser">
-                    <input type="text" name="txtuser" placeholder="NOME DE USUÁRIO" id="iuser" >
-                </label>
 
-                <label for="iemail">
-                    <input type="text" name="txtemail" placeholder="E-MAIL" id="iemail" >
-                </label>
+<body>     
+   <div class="container_form">
 
-                <label for="isenha">
-                    <input type="password" name="txtpassword" id="isenha" placeholder="SENHA">
-                </label>
-                
-                <label for="iPasswordConfirm">
-                    <input type="password" name="passwordConfirm" id="iPasswordConfirm" placeholder="CONFIRMAR SENHA" >
-                </label><br>
+        <h1>Cadastro de Usuário</h1>
 
-                <label for="imudarSenha" class="grayText" onclick="mostrarSenha()">
-                    <input type="checkbox" name="mudarSenha" id="imudarSenha" class="mudarSenha" onclick="mostrarSenha()">
-                    Mostrar senha
-                </label>
-                <br>
+        <form class="form" action="#" method="post">
                 
-                <input type="submit" name="enviar" value="Enviar">    
-                   
+            <div class="form_grupo">
+                <label for="nome" class="form_label">Nome</label>
+                <input type="text" name="nome" class="form_input" id="nome" placeholder="Nome" required>
+            </div>
+                
+            <div class="form_grupo">
+                <label for="e-mail" class="form_label">E-mail</label>
+                <input type="email" name="email" class="form_input" id="email" placeholder="seuemail@email.com" required>
+            </div>     
+
+            <div class="form_grupo">
+                <label for="senha" class="form_label">Crie uma senha</label>
+                <input type="password" name="senha" class="form_input" id="senha" placeholder="Senha" required>
+                <div class="senha_regras">
+                    A senha deve ter:<br>
+                    * pelo menos 8 caracteres;<br>
+                    * incluir letras e números.
+                </div>
+            </div>
             
-    
-            <p class="grayText"> Ao cadastrar-se, você concorda <br>com nossos <a class="link" href="https://www.youtube.com/watch?v=xvFZjo5PgG0&pp=ygUJcmljayByb2xs">Termos e Políticas de Privacidade</a>.</p>
-    
-            <p class="grayText">Já tem uma conta? <a href="login.html" class="link">Conecte-se</a> </p>
+
+            <div class="form_grupo">
+                <label for="confirmar_senha" class="form_label">Confirme sua senha</label>
+                <input type="password" name="confirmar_senha" class="form_input" id="confirmar_senha" placeholder="Senha" required>
+                <div class="senha_regras">
+                    A senha deve ter:<br>
+                    * pelo menos 8 caracteres;<br>
+                    * incluir letras e números.
+                </div>
+            </div>
             
-        </section>
-    </section>
-    
 
-    <script> 
-        function mostrarSenha(){
+            <div class="submit">
+                <input type="hidden" name="acao" value="enviar">
+                <button type="submit" name="Submit" class="submit_btn" >Cadastrar</button>
+            </div>
 
-            if(document.getElementById("imudarSenha").checked){
+            </form>
 
-                document.getElementById("isenha").type = "text";
-                document.getElementById("iPasswordConfirm").type = "text";
-
-            }
-            else{
-
-                document.getElementById("isenha").type = "password";
-                document.getElementById("iPasswordConfirm").type = "password";
-
-            }
-
-        }
-    </script>
-
+    </div><!--container_form-->
 </body>
 </html>
