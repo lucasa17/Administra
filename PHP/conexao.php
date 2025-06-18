@@ -9,6 +9,13 @@
 
         $testeConexao = "Conexão realizada com sucesso!";
 
+        if($_SESSION['EMAIL_USER'] == ""){
+
+        }
+        else{
+          $select = 
+        }
+
         //echo" $testeConexao";
 
 ?>

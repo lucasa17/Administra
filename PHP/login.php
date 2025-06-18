@@ -39,12 +39,12 @@ include 'conexao.php';
 			<h1>Entrando</h1>
 		";
 
-		header("refresh: 2; url=entrou.php");
+		header("refresh: 2; url=../HTML/cadastratrecos.html");
 
 	} 
     else {
 		echo "<h1>Usuário ou senha inválidos</h1>";
-        header("refresh: 2; url=../HTML/login.html");
+        header("refresh: 2; url=../HTML/login1.html");
     }
 
 ?>
