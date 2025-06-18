@@ -7,16 +7,33 @@
 
 <body>
     <div class="login">
-    <form>
-        <h1> ADMINISTRA </h1>
-        <label for="user"> Usuário </label>
-        <input type="text" id="user" name="Nome usuário"><br><br>
-        <label for="senha"> Senha </label>
-        <input type="text" id="senha" name="Senha"><br>
-        <h3>Esqueceu a senha?</h3>
-        <h3>Não tem cadastro?</h3><br>
-        <input type="submit" id="Entrar" value="Entrar">
-    </form>
+
+        <form class="form" action="#" method="post">
+            
+            <h1> ADMINISTRA </h1>
+
+            <div class="form_grupo">
+                <label for="nome" class="form_label">E-mail</label>
+                <input type="text" name="txtemail" class="form_input" id="nome" placeholder="E-mail" required>
+            </div>   
+
+            <div class="form_grupo">
+                <label for="e-mail" class="form_label">Crie uma senha</label>
+                <input type="password" name="txtsenha" class="form_input" id="senha" placeholder="Senha" required>
+                <div class="senha_regras">
+                    A senha deve ter:<br>
+                    * pelo menos 8 caracteres;<br>
+                    * incluir letras e números.
+                </div>
+            </div>          
+
+            <div class="submit">
+                <input type="hidden" name="acao" value="enviar">
+                <button type="submit" name="Submit" class="submit_btn" >Cadastrar</button>
+            </div>
+
+            </form>
     </div>
+
 </body>
 </html>
