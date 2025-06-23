@@ -33,7 +33,17 @@ include 'conexao.php';
  
 		$_SESSION['EMAIL_USER'] = $email;
 		$_SESSION['SENHA_USER'] = $password;
+
+        $id_user = "select id_usuario from usuario where email_usuario = '$email'";   
+
+        $id = mysqli_query($conn, $id_user);
+
+        $row = mysqli_fetch_assoc($id);
+
+        //echo $row['id_usuario'];
 		
+        $_SESSION['ID_USER'] = $row['id_usuario'];
+
 
 		echo "	
 			<h1>Entrando</h1>

@@ -2,7 +2,10 @@
 <!DOCTYPE html>
 <html>
 <head> 
-    <link rel="stylesheet" type="text/css" href="cadastro.css" media="screen" /> 
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="../CSS/cadastro.css" media="screen" /> 
 </head>
 
 <body>     
@@ -10,21 +13,21 @@
 
         <h1>Cadastro de Usuário</h1>
 
-        <form class="form" action="#" method="post">
+        <form class="form" action="../PHP/cadastro.php" method="post">
                 
             <div class="form_grupo">
                 <label for="nome" class="form_label">Nome</label>
-                <input type="text" name="nome" class="form_input" id="nome" placeholder="Nome" required>
+                <input type="text" name="txtuser" class="form_input" id="nome" placeholder="Nome" required>
             </div>
                 
             <div class="form_grupo">
                 <label for="e-mail" class="form_label">E-mail</label>
-                <input type="email" name="email" class="form_input" id="email" placeholder="seuemail@email.com" required>
+                <input type="email" name="txtemail" class="form_input" id="email" placeholder="seuemail@email.com" required>
             </div>     
 
             <div class="form_grupo">
                 <label for="senha" class="form_label">Crie uma senha</label>
-                <input type="password" name="senha" class="form_input" id="senha" placeholder="Senha" required>
+                <input type="password" name="txtpassword" class="form_input" id="senha" placeholder="Senha" required>
                 <div class="senha_regras">
                     A senha deve ter:<br>
                     * pelo menos 8 caracteres;<br>
