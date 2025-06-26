@@ -10,14 +10,12 @@ CREATE TABLE Usuario (
 -- Categorias
 CREATE TABLE Categoria (
 	id_categoria INT AUTO_INCREMENT PRIMARY KEY,
-	nome_categoria VARCHAR(45) NOT NULL,
-	fk_usuario INT NOT NULL,
-	FOREIGN KEY (fk_usuario) REFERENCES Usuario(id_usuario) ON DELETE CASCADE
+	nome_categoria VARCHAR(45) NOT NULL
 );
 -- Despesas
 CREATE TABLE Despesa (
 	id_despesa INT AUTO_INCREMENT PRIMARY KEY,
-    nome_despesa VARCHAR(50) NOT NULL,
+    nome_despesa VARCHAR(50) NULL,
 	valor_despesa DECIMAL(10,2) CHECK(valor_despesa > 0),
 	data_despesa DATE NOT NULL,
 	fk_usuario INT NOT NULL,
