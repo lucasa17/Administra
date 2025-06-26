@@ -1,6 +1,6 @@
 <!--HTML -->
 <!DOCTYPE html>
-<html>
+<html lang="pt-br">
 <head> 
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -27,7 +27,7 @@
 
             <div class="form_grupo">
                 <label for="senha" class="form_label">Crie uma senha</label>
-                <input type="password" name="txtpassword" class="form_input" id="senha" placeholder="Senha" required>
+                <input type="password" name="txtsenha" class="form_input" id="senha" placeholder="Senha" required>
                 <div class="senha_regras">
                     A senha deve ter:<br>
                     * pelo menos 8 caracteres;<br>
@@ -38,7 +38,7 @@
 
             <div class="form_grupo">
                 <label for="confirmar_senha" class="form_label">Confirme sua senha</label>
-                <input type="password" name="confirmar_senha" class="form_input" id="confirmar_senha" placeholder="Senha" required>
+                <input type="password" name="confirmar_senha" class="form_input" id="confirmar_senha" placeholder="Confirme sua senha" required>
                 <div class="senha_regras">
                     A senha deve ter:<br>
                     * pelo menos 8 caracteres;<br>
@@ -51,8 +51,9 @@
                 <input type="hidden" name="acao" value="enviar">
                 <button type="submit" name="Submit" class="submit_btn" >Cadastrar</button>
             </div>
-
             </form>
+
+            <h3>Já tem cadastro? <a href="login.html">Faça login</a> </h3><br>
 
     </div><!--container_form-->
 </body>

@@ -22,6 +22,8 @@ include 'conexao.php';
 //echo "$email <br> <br>";
 //echo "$password";
 
+    $password = hash('sha256', $password);
+
 	$entrada = "SELECT email_usuario, senha_usuario FROM usuario WHERE email_usuario = '$email' AND senha_usuario = '$password'";
 
     $login = mysqli_query($conn, $entrada);
@@ -32,7 +34,6 @@ include 'conexao.php';
 	if ($row == 1) {
  
 		$_SESSION['EMAIL_USER'] = $email;
-		$_SESSION['SENHA_USER'] = $password;
 
         $id_user = "select id_usuario from usuario where email_usuario = '$email'";   
 

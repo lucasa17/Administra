@@ -1,0 +1,47 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+}
+
+.login {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh; 
+    width: 100%;
+    background-color: lightblue;
+}
+
+.login form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center; 
+    background-color: whitesmoke;
+    padding: 40px;
+    width: 400px;  
+    border-radius: 15px;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
+}
+
+.login h3 {
+    font-size: 14px;
+    line-height: 0.2;
+}
+
+#Entrar {
+    padding: 15px 30px;
+    font-size: 16px;
+    background-color: green;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+#Entrar:hover {
+    background-color: lightgreen;
+    transform: scale(1.05);
+}

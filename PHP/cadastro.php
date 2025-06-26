@@ -29,9 +29,9 @@ include 'conexao.php';
         if ($row == 0) {
 
             $_SESSION['user_cad'] = $user;
-            $_SESSION['senha_cad'] = $senha;
             $_SESSION['email_cad'] = $email;
         
+            $senha = hash('sha256', $senha);
             $ins_cad = "insert into usuario (nome_usuario, email_usuario, senha_usuario) values('$user', '$email', '$senha');";
             $cad =  mysqli_query($conn,$ins_cad);
             
