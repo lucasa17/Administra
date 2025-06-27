@@ -10,18 +10,22 @@ CREATE TABLE Usuario (
 -- Categorias
 CREATE TABLE Categoria (
 	id_categoria INT AUTO_INCREMENT PRIMARY KEY,
-	nome_categoria VARCHAR(45) NOT NULL
+	nome_categoria VARCHAR(45) NOT NULL,
+	fk_usuario INT NOT NULL,
+	FOREIGN KEY (fk_usuario) REFERENCES Usuario(id_usuario)  ON DELETE CASCADE ON UPDATE CASCADE
 );
 -- Despesas
 CREATE TABLE Despesa (
 	id_despesa INT AUTO_INCREMENT PRIMARY KEY,
-    nome_despesa VARCHAR(50) NULL,
+    	nome_despesa VARCHAR(50) NULL,
 	valor_despesa DECIMAL(10,2) CHECK(valor_despesa > 0),
 	data_despesa DATE NOT NULL,
+	fk_dependente int,
 	fk_usuario INT NOT NULL,
 	fk_categoria INT NOT NULL,
-	FOREIGN KEY (fk_usuario) REFERENCES Usuario(id_usuario) ON DELETE CASCADE,
-	FOREIGN KEY (fk_categoria) REFERENCES Categoria(id_categoria)
+	FOREIGN KEY (fk_dependente) REFERENCES Dependente(id_dependente) ON DELETE CASCADE ON UPDATE CASCADE,
+	FOREIGN KEY (fk_usuario) REFERENCES Usuario(id_usuario) ON DELETE CASCADE ON UPDATE CASCADE,
+	FOREIGN KEY (fk_categoria) REFERENCES Categoria(id_categoria) ON DELETE CASCADE ON UPDATE CASCADE
 );
 -- Dívidas
 CREATE TABLE Divida (
@@ -30,9 +34,9 @@ CREATE TABLE Divida (
 	valor_divida DECIMAL(10,2) CHECK(valor_divida > 0),
 	data_vencimento DATE NOT NULL,
 	fk_usuario INT NOT NULL,
-    fk_categoria INT NOT NULL,
-	FOREIGN KEY (fk_usuario) REFERENCES Usuario(id_usuario) ON DELETE CASCADE,
-    FOREIGN KEY (fk_categoria) REFERENCES Categoria(id_categoria)
+        fk_categoria INT NOT NULL,
+	FOREIGN KEY (fk_usuario) REFERENCES Usuario(id_usuario)  ON DELETE CASCADE ON UPDATE CASCADE,
+    	FOREIGN KEY (fk_categoria) REFERENCES Categoria(id_categoria) ON DELETE CASCADE ON UPDATE CASCADE
 );
 -- Rendas
 CREATE TABLE Renda (
@@ -41,7 +45,7 @@ CREATE TABLE Renda (
 	valor_renda DECIMAL(10,2) CHECK(valor_renda >= 0),
 	data_renda DATE NOT NULL,
 	fk_usuario INT NOT NULL,
-	FOREIGN KEY (fk_usuario) REFERENCES Usuario(id_usuario) ON DELETE CASCADE
+	FOREIGN KEY (fk_usuario) REFERENCES Usuario(id_usuario)  ON DELETE CASCADE ON UPDATE CASCADE
 );
 -- Poupança
 CREATE TABLE Poupanca (
@@ -50,7 +54,7 @@ CREATE TABLE Poupanca (
 	valor_atual DECIMAL(10,2) CHECK(valor_atual >= 0),
 	valor_meta DECIMAL(10,2) CHECK(valor_meta > 0),
 	fk_usuario INT NOT NULL,
-	FOREIGN KEY (fk_usuario) REFERENCES Usuario(id_usuario) ON DELETE CASCADE
+	FOREIGN KEY (fk_usuario) REFERENCES Usuario(id_usuario)  ON DELETE CASCADE ON UPDATE CASCADE
 );
 -- Dependentes
 CREATE TABLE Dependente (
