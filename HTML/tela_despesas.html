@@ -28,25 +28,31 @@
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ms-auto">
         <li class="nav-item">
-          <a class="nav-link" href="tela_gastos.html">Gastos</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="login.html">Login</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="cadastro.html">Cadastro</a>
-        </li>
+            <a class="nav-link" href="login.html">Login</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="dependentes.html">Cadastro Dependentes</a>
+          </li>
+          <li class="nav-item">
+              <a class="nav-link" href="tela_despesas.html">Despesas</a>
+          </li>
+          <li class="nav-item">
+              <a class="nav-link" href="tela_dividas.html">Dívidas</a>
+          </li>
+          <li class="nav-item">
+              <a class="nav-link" href="tela_renda.html">Renda</a>
+          </li>
       </ul>
     </div>
   </div>
 </nav>
 
 
-  <!-- CADASTRO DE GASTOS -->
+  <!-- CADASTRO DE DESPESAS -->
   <div class="container mt-4">
     <div class="form-section bg-white p-4 rounded shadow-sm">
-      <h3>Cadastrar Gasto</h3>
-      <form id="formGasto">
+      <h3>Cadastrar Despesa</h3>
+      <form id="form">
         <label for="pessoa">Pessoa:</label>
         <select id="pessoa" class="form-select" required>
           <option value="">--Selecione--</option>
@@ -93,25 +99,25 @@
 
         <label for="valor" class="mt-3">Valor total (R$):</label>
         <input type="number" id="valor" class="form-control" min="0" step="0.01" required />
-
+        <!--
         <label for="parcelas" class="mt-3">Número de parcelas:</label>
         <input type="number" id="parcelas" class="form-control" min="1" required />
-
-        <label for="data" class="mt-3">Data inicial do gasto:</label>
+        -->
+        <label for="data" class="mt-3">Data em que a despesa foi realizada:</label>
         <input type="date" id="data" class="form-control" required />
 
-        <button type="submit" class="btn btn-success mt-4">Salvar Gasto</button>
+        <button type="submit" class="btn btn-success mt-4">Salvar Despesa</button>
       </form>
     </div>
   </div>
 
-  <!-- CONSULTA DE GASTOS -->
+  <!-- CONSULTA DE DESPESAS -->
 <div class="container mt-5">
   <div class="consulta-section bg-white p-4 rounded shadow-sm">
-    <h3>Consultar Gastos</h3>
+    <h3>Consultar Despesa</h3>
 
     <!-- Formulário de filtros -->
-    <form id="filtroGastos" class="row g-3">
+    <form id="filtro" class="row g-3">
       <div class="col-md-6">
         <label for="filtroPessoa" class="form-label">Pessoa:</label>
         <select id="filtroPessoa" class="form-select">
@@ -121,6 +127,18 @@
           <option value="Carlos">Carlos</option>
         </select>
       </div>
+
+      <!--
+      <div class="col-md-6">
+        <label for="filtroCat" class="form-label">Categoria</label>
+        <select id="filtroCat" class="form-select">
+          <option value="">--Todos--</option>
+          <option value="Alimentação">Alimentação</option>
+          <option value="Transporte">Transporte</option>
+          <option value="Lazer">Lazer</option>
+        </select>
+      </div>
+    -->
 
       <div class="col-md-6">
         <label for="filtroTipo" class="form-label">Tipo de Pagamento:</label>
