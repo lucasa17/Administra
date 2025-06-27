@@ -1,0 +1,32 @@
+  <!-- CADASTRO DEPENDENTES -->
+<main class="container mt-4">
+  <div class="row justify-content-center">
+    <!-- FORMULÁRIO DE CADASTRO -->
+    <div class="col-md-6 mb-4">
+      <div class="form-section bg-white p-4 rounded shadow-sm h-100">
+        <h3 class="text-center">Cadastrar Dependentes</h3>
+        <form id="formGasto">
+          <label for="nomeDependente" class="mt-3">Nome do dependente:</label>
+          <input type="text" id="nomeDependente" class="form-control" placeholder="Digite o nome do dependente..." required />
+
+          <label for="relacao" class="mt-3">Relação:</label>
+          <input type="text" id="relacao" class="form-control" placeholder="Ex: Filho(a), Pai/Mãe..." required />
+
+          <button type="submit" class="btn btn-success mt-4">Cadastrar dependente</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- LISTA DE DEPENDENTES -->
+    <div class="col-md-6 mb-4">
+      <div class="form-section bg-white p-4 rounded shadow-sm h-100">
+        <h3 class="text-center">Dependentes Cadastrados</h3>
+        <ul id="listaDependentes" class="list-group mt-3">
+          <!-- Os dependentes aparecerão aqui via JS -->
+          <li class="list-group-item">João - Filho</li>
+          <li class="list-group-item">Maria - Cônjuge</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</main>
