@@ -33,6 +33,7 @@ CREATE TABLE Divida (
 	nome_divida VARCHAR(50) NOT NULL,
 	valor_divida DECIMAL(10,2) CHECK(valor_divida > 0),
 	data_vencimento DATE NOT NULL,
+	parcelas int,
 	fk_usuario INT NOT NULL,
         fk_categoria INT NOT NULL,
 	FOREIGN KEY (fk_usuario) REFERENCES Usuario(id_usuario)  ON DELETE CASCADE ON UPDATE CASCADE,
