@@ -15,7 +15,7 @@ include 'conexao.php';
 
 
     $user = $_POST['txtuser'];
-    $senha = $_POST['txtpassword'];
+    $senha = $_POST['txtsenha'];
     $email = $_POST['txtemail'];
 
 	    $entrada = "SELECT email_usuario, senha_usuario FROM usuario WHERE email_usuario = '$email' AND senha_usuario = '$senha'";
