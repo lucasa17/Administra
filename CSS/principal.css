@@ -3,21 +3,33 @@ body {
   font-family: Arial, sans-serif;
   margin: 0;
   padding-top: 80px; /* Compensa navbar fixa */
-  background-color: lightblue; /* cor de fundo desejada */
+  background-color: lightblue; 
+}
+  
+/* Ajustes de posicionamento de tela */
+html, body {
+  height: 100%;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
 }
 
-/* Ajuste da navbar Bootstrap (fundo azul escuro e texto branco) */
+body > .container {
+  flex: 1 0 auto;
+}
+
+/* Ajuste da navbar Bootstrap*/
 .navbar {
-  background-color: #003366 !important; /* azul escuro */
+  background-color: #003366 !important; 
 }
 
 .navbar .navbar-brand,
 .navbar .nav-link {
-  color: #ffffff !important; /* texto branco */
+  color: #ffffff !important; 
 }
 
 .navbar .nav-link:hover {
-  color: #cccccc !important; /* hover mais suave */
+  color: #cccccc !important; 
 }
 
 /* Seções como formulário ou consulta */
@@ -78,4 +90,5 @@ footer {
   background-color: #003366 !important;
   color: white;
   padding: 2rem 0;
+  margin-bottom: auto;
 }
