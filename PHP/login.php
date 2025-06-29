@@ -50,7 +50,7 @@ include 'conexao.php';
 			<h1>Entrando</h1>
 		";
 
-		header("refresh: 2; url=gastos.php");
+		header("refresh: 2; url=despesa.php");
 
 	} 
     else {
