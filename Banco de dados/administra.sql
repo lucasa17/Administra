@@ -1,5 +1,4 @@
 CREATE DATABASE sistemaFinanceiro;
-
 USE sistemaFinanceiro;
 -- Usuários
 CREATE TABLE Usuario (
@@ -44,7 +43,7 @@ CREATE TABLE Divida (
 	fk_tipo_pagamento INT NOT NULL,
 	FOREIGN KEY (fk_usuario) REFERENCES Usuario(id_usuario)  ON DELETE CASCADE ON UPDATE CASCADE,
 	FOREIGN KEY (fk_tipo_pagamento) REFERENCES TipoPagamento(id_pagamento)  ON DELETE CASCADE ON UPDATE CASCADE,
-    	FOREIGN KEY (fk_categoria) REFERENCES Categoria(id_categoria) ON DELETE CASCADE ON UPDATE CASCADE
+	FOREIGN KEY (fk_categoria) REFERENCES Categoria(id_categoria) ON DELETE CASCADE ON UPDATE CASCADE
 );
 -- Como o usuário ganha o seu dinheiro
 CREATE TABLE Renda (
@@ -63,7 +62,7 @@ CREATE TABLE Poupanca (
 	valor_atual DECIMAL(10,2) NOT NULL,
 	valor_meta DECIMAL(10,2) NOT NULL,
 	fk_usuario INT NOT NULL,
-	UNIQUE (objetivo, fk_usuario),
+	UNIQUE (objetivo),
 	FOREIGN KEY (fk_usuario) REFERENCES Usuario(id_usuario)  ON DELETE CASCADE ON UPDATE CASCADE
 );
 -- Dependentes
@@ -72,7 +71,7 @@ CREATE TABLE Dependente (
 	nome_dependente VARCHAR(50) NOT NULL,
 	relacao VARCHAR(45),
 	fk_usuario INT NOT NULL,
-	UNIQUE(nome_dependente, fk_usuario),
+	UNIQUE(nome_dependente),
 	FOREIGN KEY (fk_usuario) REFERENCES Usuario(id_usuario) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
@@ -89,5 +88,7 @@ CREATE TABLE TipoPagamento(
 CREATE TABLE FonteRenda(
 	id_renda INT AUTO_INCREMENT PRIMARY KEY,
 	fonte_da_renda VARCHAR(45) NOT NULL,
-	UNIQUE(fonte_da_renda)
+	fk_usuario INT NOT NULL,
+	UNIQUE(fonte_da_renda),
+	FOREIGN KEY (fk_usuario) REFERENCES Usuario(id_usuario)  ON DELETE CASCADE ON UPDATE CASCADE
 );
