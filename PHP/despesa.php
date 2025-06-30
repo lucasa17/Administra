@@ -58,7 +58,7 @@ include 'conexao.php';
     <div class='form-section bg-white p-4 rounded shadow-sm'>
     <h3>Cadastrar Despesa</h3>
 
-    <form class='form' action='../PHP/cadastraDespesa.php' method='post'>
+    <form id='formGasto' class='form' action='../PHP/cadastraDespesa.php' method='post'>
       <label for='despesa' class='mt-3'>Nome da Despesa:</label>
       <input type='text' name='txtnomedespesa' id='despesa' class='form-control' rows='3' placeholder='Digite a despesa'></input>
 

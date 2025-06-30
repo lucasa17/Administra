@@ -125,6 +125,74 @@ include 'conexao.php';
 
                 <button type='submit' class='btn btn-success mt-4'>Salvar Dívida</button>
             </form>
+";
+$selectDividas = "SELECT d.*, c.nome_categoria, tp.nome_pagamento
+                  FROM divida d
+                  LEFT JOIN categoriaDivida c ON d.fk_categoria = c.id_categoria
+                  LEFT JOIN tipopagamento tp ON d.fk_tipo_pagamento = tp.id_pagamento
+                  WHERE d.fk_usuario = $id
+                  ORDER BY d.data_vencimento ASC";
+
+$queryDividas = mysqli_query($conn, $selectDividas);
+
+echo "
+<div class='container mt-4'>
+  <div class='form-section bg-white p-4 rounded shadow-sm'>
+    <h3>Dívidas Cadastradas</h3>
+    <div class='table-responsive'>
+      <table class='table table-bordered align-middle'>
+        <thead class='table-light'>
+          <tr>
+            <th>Data Vencimento</th>
+            <th>Nome da Dívida</th>
+            <th>Credor</th>
+            <th>Categoria</th>
+            <th>Tipo Pagamento</th>
+            <th>Parcelas</th>
+            <th>Valor Total (R$)</th>
+            <th class='text-center'>Excluir</th>
+          </tr>
+        </thead>
+        <tbody>
+";
+
+while ($divida = mysqli_fetch_assoc($queryDividas)) {
+    $dataVencimento = date("d/m/Y", strtotime($divida['data_vencimento']));
+    $nomeDivida = htmlspecialchars($divida['nome_divida']);
+    $credor = htmlspecialchars($divida['credor']);
+    $categoria = $divida['nome_categoria'] ?? '-';
+    $tipoPagamento = $divida['nome_pagamento'] ?? '-';
+    $parcelas = $divida['parcelas'];
+    $valor = number_format($divida['valor_divida'], 2, ',', '.');
+    $idDivida = $divida['id_divida'];
+
+    echo "
+      <tr>
+        <td>$dataVencimento</td>
+        <td>$nomeDivida</td>
+        <td>$credor</td>
+        <td>$categoria</td>
+        <td>$tipoPagamento</td>
+        <td>$parcelas</td>
+        <td>R$ $valor</td>
+        <td class='text-center'>
+          <form action='excluiDivida.php' method='POST' onsubmit='return confirm(\"Deseja realmente excluir esta dívida?\");'>
+            <input type='hidden' name='idDivida' value='$idDivida'>
+            <button type='submit' class='btn btn-danger btn-sm'>Excluir</button>
+          </form>
+        </td>
+      </tr>
+    ";
+}
+
+echo "
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+";
+echo"
             </div>
         </div>
     ";

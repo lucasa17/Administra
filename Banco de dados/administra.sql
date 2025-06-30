@@ -46,7 +46,7 @@ CREATE TABLE Divida (
 	data_primeira_parcela DATE NOT NULL,
 	parcelas int,
 	fk_usuario INT NOT NULL,
-	-- fk_categoria INT NOT NULL,
+	fk_categoria INT NOT NULL,
 	fk_tipo_pagamento INT NOT NULL,
 	FOREIGN KEY (fk_usuario) REFERENCES Usuario(id_usuario)  ON DELETE CASCADE ON UPDATE CASCADE,
 	FOREIGN KEY (fk_tipo_pagamento) REFERENCES TipoPagamento(id_pagamento) ON DELETE CASCADE ON UPDATE CASCADE
