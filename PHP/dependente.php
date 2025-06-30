@@ -40,7 +40,7 @@
             <a class="nav-link" href="tela_dividas.html">Dívidas</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="tela_renda.html">Renda</a>
+            <a class="nav-link" href="renda.php ">Renda</a>
         </li>
       </ul>
     </div>

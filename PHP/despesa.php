@@ -40,7 +40,7 @@
             <a class="nav-link" href="divida.php">Dívidas</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="tela_renda.html">Renda</a>
+            <a class="nav-link" href="renda.php">Renda</a>
         </li>
       </ul>
     </div>
@@ -144,9 +144,6 @@ include 'conexao.php';
         <label for='valor' class='mt-3'>Valor total (R$):</label>
         <input type='number' name='numValor' id='valor' class='form-control' min='0' step='0.01' required />
 
-        <label for='parcelas' class='mt-3'>Número de parcelas:</label>
-        <input type='number' name='numParcelas' id='parcelas' class='form-control' min='1' required />
-
         <label for='data' class='mt-3'>Data inicial do gasto:</label>
         <input type='date' name='txtData' id='data' class='form-control'/>
 
@@ -156,6 +153,71 @@ include 'conexao.php';
   </div>
 ";
 
+
+$selectDespesas = "SELECT d.*, dep.nome_dependente, cat.nome_categoria, tp.nome_pagamento
+                   FROM despesa d
+                   LEFT JOIN dependente dep ON d.fk_dependente = dep.id_dependente
+                   LEFT JOIN categoria cat ON d.fk_categoria = cat.id_categoria
+                   LEFT JOIN tipopagamento tp ON d.fk_tipo_pagamento = tp.id_pagamento
+                   WHERE d.fk_usuario = $id
+                   ORDER BY d.data_despesa DESC";
+
+$queryDespesas = mysqli_query($conn, $selectDespesas);
+
+echo "
+<div class='container mt-4'>
+  <div class='form-section bg-white p-4 rounded shadow-sm'>
+    <h3>Despesas Cadastradas</h3>
+    <div class='table-responsive'>
+      <table class='table table-bordered align-middle'>
+        <thead class='table-light'>
+          <tr>
+            <th>Data</th>
+            <th>Nome da Despesa</th>
+            <th>Dependente</th>
+            <th>Categoria</th>
+            <th>Tipo Pagamento</th>
+            <th>Valor (R$)</th>
+            <th class='text-center'>Excluir</th>
+          </tr>
+        </thead>
+        <tbody>
+";
+
+while ($despesa = mysqli_fetch_assoc($queryDespesas)) {
+    $dataDespesa = date("d/m/Y", strtotime($despesa['data_despesa']));
+    $nomeDespesa = htmlspecialchars($despesa['nome_despesa']);
+    $nomeDependente = $despesa['nome_dependente'] ?? '-';
+    $nomeCategoria = $despesa['nome_categoria'] ?? '-';
+    $nomePagamento = $despesa['nome_pagamento'] ?? '-';
+    $valorDespesa = number_format($despesa['valor_despesa'], 2, ',', '.');
+    $idDespesa = $despesa['id_despesa'];
+
+    echo "
+      <tr>
+        <td>$dataDespesa</td>
+        <td>$nomeDespesa</td>
+        <td>$nomeDependente</td>
+        <td>$nomeCategoria</td>
+        <td>$nomePagamento</td>
+        <td>R$ $valorDespesa</td>
+        <td class='text-center'>
+          <form action='excluiDespesa.php' method='POST' style='display:inline;'>
+            <input type='hidden' name='idDespesa' value='$idDespesa'>
+            <button type='submit' class='btn btn-danger btn-sm'>Excluir</button>
+          </form>
+        </td>
+      </tr>
+    ";
+}
+
+echo "
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+";
 ?>
 
 <script>
