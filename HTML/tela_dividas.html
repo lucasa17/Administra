@@ -166,7 +166,7 @@
       </div>
     </form>
 
-    <!-- Tabela com resultados -->
+<!-- Tabela com resultados -->
 <div class="mt-4">
   <table class="table table-bordered align-middle">
     <thead class="table-light">
@@ -175,6 +175,7 @@
         <th>Pessoa</th>
         <th>Tipo de Pagamento</th>
         <th>Valor (R$)</th>
+        <th class="text-center">Editar</th> <!-- NOVO -->
         <th class="text-center">Excluir</th>
       </tr>
     </thead>
@@ -184,6 +185,9 @@
         <td>João</td>
         <td>Pix</td>
         <td>120.00</td>
+        <td class="text-center">
+          <i class="bi bi-pencil-square" style="cursor:pointer; font-size: 1.2rem;" onclick="editarRegistro(this)"></i>
+        </td>
         <td class="text-center">
           <img src="https://cdn-icons-png.flaticon.com/512/1214/1214428.png" 
                alt="Excluir" 
@@ -198,6 +202,9 @@
         <td>Cartão Crédito</td>
         <td>350.00</td>
         <td class="text-center">
+          <i class="bi bi-pencil-square" style="cursor:pointer; font-size: 1.2rem;" onclick="editarRegistro(this)"></i>
+        </td>
+        <td class="text-center">
           <img src="https://cdn-icons-png.flaticon.com/512/1214/1214428.png" 
                alt="Excluir" 
                class="icon-excluir" 
@@ -208,6 +215,7 @@
     </tbody>
   </table>
 </div>
+
 </div>
 </div>
 
