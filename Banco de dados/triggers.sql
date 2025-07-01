@@ -1,11 +1,11 @@
 -- Insere data de vencimento de acordo com as parcelas e data inicial
 DELIMITER //
 CREATE TRIGGER tr_seta_data_vencimento 
-AFTER INSERT ON Divida 
+BEFORE INSERT ON Divida 
 FOR EACH ROW
 BEGIN 
 	IF(NEW.data_vencimento IS NULL) THEN
-		SET NEW.data_vencimento = DATE_ADD(NEW.data_primeira_parcela, INTERVAL (NEW.parcelas - 1)MONTH );
+		SET NEW.data_vencimento = DATE_ADD(NEW.data_primeira_parcela, INTERVAL (NEW.parcelas - 1) MONTH );
 	END IF;
 END //
 DELIMITER ;
@@ -20,6 +20,7 @@ BEGIN
     SET MESSAGE_TEXT = "O valor da divida deve ser no mínimo 0";
     END IF;
 END //
+DELIMITER ;
 -- Antes de atualizar
 DELIMITER //
 CREATE TRIGGER tr_valida_valor_divida_update
@@ -43,6 +44,7 @@ BEGIN
 		SET MESSAGE_TEXT = "O valor da renda não pode ser negativa";
     END IF;
 END //
+DELIMITER ;
 -- Antes de atualizar também
 DELIMITER //
 CREATE TRIGGER tr_valida_valor_renda_update
@@ -66,6 +68,7 @@ BEGIN
 		SET MESSAGE_TEXT = "O valor atual não pode ser maior que o da meta";
     END IF;
 END //
+DELIMITER ;
 -- Antes de atualizar também
 DELIMITER //
 CREATE TRIGGER tr_valida_poupanca_update
