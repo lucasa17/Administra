@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Administra</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+  <!-- Ícones Bootstrap -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
+
+  <!-- CSS personalizado -->
+  <link href="principal.css" rel="stylesheet" />
+</head>
+<body style="padding-top: 80px;">
+  <!-- HEADER -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top shadow">
+    <div class="container">
+      <a class="navbar-brand fw-bold" href="index.html">Administra</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" href="dependentes.html">Cadastro Dependentes</a></li>
+          <li class="nav-item"><a class="nav-link" href="tela_despesas.html">Despesas</a></li>
+          <li class="nav-item"><a class="nav-link" href="tela_dividas.html">Dívidas</a></li>
+          <li class="nav-item"><a class="nav-link" href="tela_renda.html">Renda</a></li>
+          <li class="nav-item"><a class="nav-link">Sair</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- CADASTRO DE DESPESAS -->
+<div class="container mt-4">
+  <div class="form-section bg-white p-4 rounded shadow-sm">
+    <h3>Cadastrar Despesa</h3>
+    <form id="formDespesa">
+      <label for="nomeDespesa">Nome da Despesa:</label>
+      <input type="text" id="nomeDespesa" class="form-control" placeholder="Digite a despesa" required>
+
+      <label for="dependente" class="mt-3">Dependente:</label>
+      <select id="dependente" class="form-select">
+        <option value="">--Selecione--</option>
+        <option value="João">João</option>
+        <option value="Maria">Maria</option>
+      </select>
+
+      <label for="categoria" class="mt-3">Categoria:</label>
+      <select id="categoria" class="form-select">
+        <option value="">--Selecione--</option>
+        <option value="Alimentação">Alimentação</option>
+        <option value="Transporte">Transporte</option>
+        <option value="Outra">Outra...</option>
+      </select>
+
+      <div id="novaCategoriaWrapper" class="mt-2" style="display: none;">
+        <label for="novaCategoria">Digite a nova categoria:</label>
+        <input type="text" id="novaCategoria" class="form-control" placeholder="Ex: Educação, Saúde..." />
+      </div>
+
+      <label for="tipoPagamento" class="mt-3">Tipo de Pagamento:</label>
+      <select id="tipoPagamento" class="form-select" required>
+        <option value="">--Selecione--</option>
+        <option value="Pix">Pix</option>
+        <option value="Dinheiro">Dinheiro</option>
+        <option value="Outro">Outro...</option>
+      </select>
+
+      <div id="novoTipoWrapper" class="mt-2" style="display: none;">
+        <label for="novoTipo">Digite o novo tipo de pagamento:</label>
+        <input type="text" id="novoTipo" class="form-control" placeholder="Ex: Transferência Internacional" />
+      </div>
+
+      <label for="valor" class="mt-3">Valor (R$):</label>
+      <input type="number" id="valor" class="form-control" min="0" step="0.01" required />
+
+      <label for="data" class="mt-3">Data:</label>
+      <input type="date" id="data" class="form-control" required />
+
+      <button type="submit" class="btn btn-success mt-4">Salvar Despesa</button>
+    </form>
+  </div>
+</div>
+
+  <!-- CONSULTA DE DESPESAS -->
+  <div class="container mt-5">
+    <div class="consulta-section bg-white p-4 rounded shadow-sm">
+      <h3>Consultar Despesas</h3>
+      <table class="table table-bordered align-middle mt-4">
+        <thead class="table-light">
+          <tr>
+            <th>Data</th>
+            <th>Despesa</th>
+            <th>Dependente</th>
+            <th>Categoria</th>
+            <th>Tipo Pagamento</th>
+            <th>Valor (R$)</th>
+            <th class="text-center">Editar</th>
+            <th class="text-center">Excluir</th>
+          </tr>
+        </thead>
+        <tbody id="tabelaDespesas">
+          <!-- Resultados gerados via JS -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Modal de edição -->
+  <div class="modal fade" id="modalEditarDespesa" tabindex="-1" aria-labelledby="modalEditarDespesaLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form id="formEditarDespesa">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalEditarDespesaLabel">Editar Despesa</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <label for="editData">Data:</label>
+            <input type="date" id="editData" class="form-control" required />
+            <label for="editNome" class="mt-3">Nome da Despesa:</label>
+            <input type="text" id="editNome" class="form-control" required />
+            <label for="editDependente" class="mt-3">Dependente:</label>
+            <input type="text" id="editDependente" class="form-control" />
+            <label for="editCategoria" class="mt-3">Categoria:</label>
+            <input type="text" id="editCategoria" class="form-control" required />
+            <label for="editTipoPagamento" class="mt-3">Tipo Pagamento:</label>
+            <input type="text" id="editTipoPagamento" class="form-control" required />
+            <label for="editValor" class="mt-3">Valor:</label>
+            <input type="number" id="editValor" class="form-control" step="0.01" required />
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn btn-success">Salvar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    function excluirLinha(imgElement) {
+      const confirmar = confirm("Deseja realmente excluir esta despesa?");
+      if (confirmar) {
+        const linha = imgElement.closest('tr');
+        linha.remove();
+      }
+    }
+
+    function editarDespesa(icone) {
+      const linha = icone.closest('tr');
+      document.getElementById('editData').value = linha.cells[0].textContent;
+      document.getElementById('editNome').value = linha.cells[1].textContent;
+      document.getElementById('editDependente').value = linha.cells[2].textContent;
+      document.getElementById('editCategoria').value = linha.cells[3].textContent;
+      document.getElementById('editTipoPagamento').value = linha.cells[4].textContent;
+      document.getElementById('editValor').value = linha.cells[5].textContent;
+      document.getElementById('formEditarDespesa').dataset.linha = linha.rowIndex;
+      const modal = new bootstrap.Modal(document.getElementById('modalEditarDespesa'));
+      modal.show();
+    }
+
+    document.getElementById('formEditarDespesa').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const index = this.dataset.linha;
+      const tabela = document.getElementById('tabelaDespesas');
+      const linha = tabela.rows[index - 1];
+      linha.cells[0].textContent = document.getElementById('editData').value;
+      linha.cells[1].textContent = document.getElementById('editNome').value;
+      linha.cells[2].textContent = document.getElementById('editDependente').value;
+      linha.cells[3].textContent = document.getElementById('editCategoria').value;
+      linha.cells[4].textContent = document.getElementById('editTipoPagamento').value;
+      linha.cells[5].textContent = parseFloat(document.getElementById('editValor').value).toFixed(2);
+      bootstrap.Modal.getInstance(document.getElementById('modalEditarDespesa')).hide();
+    });
+
+    // Dados fictícios ao carregar
+    document.addEventListener('DOMContentLoaded', function () {
+      const despesasExemplo = [
+        { data: '2025-06-25', nome: 'Supermercado', dependente: 'Maria', categoria: 'Alimentacao', tipo: 'Pix', valor: '250.00' },
+        { data: '2025-06-22', nome: 'Uber', dependente: 'João', categoria: 'Transporte', tipo: 'Dinheiro', valor: '45.90' },
+        { data: '2025-06-20', nome: 'Cinema', dependente: '-', categoria: 'Lazer', tipo: 'Cartão Crédito', valor: '60.00' }
+      ];
+
+      const tbody = document.getElementById('tabelaDespesas');
+      despesasExemplo.forEach((d) => {
+        const linha = tbody.insertRow();
+        linha.innerHTML = `
+          <td>${d.data}</td>
+          <td>${d.nome}</td>
+          <td>${d.dependente}</td>
+          <td>${d.categoria}</td>
+          <td>${d.tipo}</td>
+          <td>${parseFloat(d.valor).toFixed(2)}</td>
+          <td class="text-center">
+            <i class="bi bi-pencil-square" style="cursor:pointer;" onclick="editarDespesa(this)"></i>
+          </td>
+          <td class="text-center">
+            <img src="https://cdn-icons-png.flaticon.com/512/1214/1214428.png" style="width:24px; cursor:pointer;" onclick="excluirLinha(this)">
+          </td>`;
+      });
+    });
+  </script>
+
+  <!-- FOOTER -->
+  <footer class="mt-4">
+    <div class="container text-center">
+      <p class="mb-1">© 2025 Administra - Todos os direitos reservados</p>
+    </div>
+  </footer>
+</body>
+</html>
