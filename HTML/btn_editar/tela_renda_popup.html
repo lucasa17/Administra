@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Administra</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
+  <link href="principal.css" rel="stylesheet" />
+</head>
+<body style="padding-top: 80px;">
+
+  <!-- HEADER -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top shadow">
+    <div class="container">
+      <a class="navbar-brand fw-bold" href="index.html">Administra</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" href="../HTML/login.html">Login</a></li>
+          <li class="nav-item"><a class="nav-link" href="#">Cadastro Dependentes</a></li>
+          <li class="nav-item"><a class="nav-link" href="#">Despesas</a></li>
+          <li class="nav-item"><a class="nav-link" href="#">Dívidas</a></li>
+          <li class="nav-item"><a class="nav-link" href="#">Renda</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- FORMULÁRIO CADASTRO RENDA -->
+  <div class="container mt-4">
+    <div class="form-section bg-white p-4 rounded shadow-sm">
+      <h3>Cadastrar Renda</h3>
+      <form class="form" id="formRenda" action="#" method="post">
+        <label for="tipoRenda" class="mt-3">Fonte de Renda:</label>
+        <select name="txtRenda" id="tipoRenda" class="form-select" required>
+          <option value="">--Selecione--</option>
+          <option value="1">Salário</option>
+          <option value="2">Freelance</option>
+          <option value="Outro">Outro...</option>
+        </select>
+
+        <div id="novoTipoWrapper" class="mt-2" style="display: none;">
+          <label for="novoTipo">Digite a nova fonte de renda:</label>
+          <input type="text" name="txtNovaRenda" id="novoTipo" class="form-control" placeholder="Ex: Bico" />
+        </div>
+
+        <label for="valor" class="mt-3">Valor total (R$):</label>
+        <input type="number" name="numValor" id="valor" class="form-control" min="0" step="0.01" required />
+
+        <label for="data" class="mt-3">Data de recebimento:</label>
+        <input type="date" name="txtData" id="data" class="form-control" required />
+
+        <button type="submit" class="btn btn-success mt-4">Salvar Renda</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- FONTES DE RENDA (EXEMPLO ESTÁTICO) -->
+  <div class="container mt-4">
+    <div class="form-section bg-white p-4 rounded shadow-sm">
+      <h3>Fontes de Renda Cadastradas</h3>
+      <div class="table-responsive">
+        <table class="table table-bordered align-middle">
+          <thead class="table-light">
+            <tr>
+              <th>Fonte de Renda</th>
+              <th class="text-center">Excluir</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Salário</td>
+              <td class="text-center">
+                <button class="btn btn-danger btn-sm">Excluir</button>
+              </td>
+            </tr>
+            <tr>
+              <td>Freelance</td>
+              <td class="text-center">
+                <button class="btn btn-danger btn-sm">Excluir</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- RENDAS CADASTRADAS (EXEMPLO ESTÁTICO) -->
+  <div class="container mt-4">
+    <div class="form-section bg-white p-4 rounded shadow-sm">
+      <h3>Rendas Cadastradas</h3>
+      <div class="table-responsive">
+        <table class="table table-bordered align-middle">
+            <thead class="table-light">
+                <tr>
+                  <th>Data</th>
+                  <th>Tipo de Renda</th>
+                  <th>Valor (R$)</th>
+                  <th class="text-center">Editar</th>
+                  <th class="text-center">Excluir</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>10/06/2025</td>
+                  <td>Salário</td>
+                  <td>R$ 3.500,00</td>
+                  <td class="text-center">
+                    <button class="btn btn-sm btn-outline-primary" onclick="abrirModalEdicao(this)">
+                      <i class="bi bi-pencil-square"></i>
+                    </button>
+                  </td>
+                  <td class="text-center">
+                    <button class="btn btn-danger btn-sm">Excluir</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>20/06/2025</td>
+                  <td>Freelance</td>
+                  <td>R$ 1.200,00</td>
+                  <td class="text-center">
+                    <button class="btn btn-sm btn-outline-primary" onclick="abrirModalEdicao(this)">
+                      <i class="bi bi-pencil-square"></i>
+                    </button>
+                  </td>
+                  <td class="text-center">
+                    <button class="btn btn-danger btn-sm">Excluir</button>
+                  </td>
+                </tr>
+              </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+<!-- MODAL DE EDIÇÃO -->
+<div class="modal fade" id="modalEditar" tabindex="-1" aria-labelledby="modalEditarLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form id="formEditar">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalEditarLabel">Editar Renda</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+          </div>
+          <div class="modal-body">
+            <input type="hidden" id="editIndex">
+            <div class="mb-3">
+              <label for="editData" class="form-label">Data</label>
+              <input type="date" id="editData" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label for="editTipo" class="form-label">Tipo de Renda</label>
+              <input type="text" id="editTipo" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label for="editValor" class="form-label">Valor (R$)</label>
+              <input type="number" id="editValor" class="form-control" step="0.01" required>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-success">Salvar Alterações</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  
+
+  <!-- FOOTER -->
+  <footer class="mt-4">
+    <div class="container text-center">
+      <p class="mb-1">© 2025 Administra - Todos os direitos reservados</p>
+    </div>
+  </footer>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Script funcional -->
+  <script>
+    // Renda - campo "Outro"
+    const tipoRenda = document.getElementById("tipoRenda");
+    const novoTipoWrapper = document.getElementById("novoTipoWrapper");
+    const novoTipoInput = document.getElementById("novoTipo");
+  
+    tipoRenda.addEventListener("change", () => {
+      novoTipoWrapper.style.display = tipoRenda.value === "Outro" ? "block" : "none";
+      novoTipoInput.required = tipoRenda.value === "Outro";
+    });
+  
+    document.getElementById("formRenda").addEventListener("submit", function (e) {
+      if (tipoRenda.value === "Outro" && novoTipoInput.value.trim() !== "") {
+        const novaOpcao = new Option(novoTipoInput.value, novoTipoInput.value, true, true);
+        tipoRenda.add(novaOpcao);
+        tipoRenda.value = novoTipoInput.value;
+      }
+    });
+  
+    // Função para abrir o modal com dados da linha selecionada
+    function abrirModalEdicao(botaoEditar) {
+      const linha = botaoEditar.closest("tr");
+      const celulas = linha.querySelectorAll("td");
+  
+      const dataTexto = celulas[0].textContent.trim().split("/").reverse().join("-"); // dd/mm/yyyy → yyyy-mm-dd
+      const tipo = celulas[1].textContent.trim();
+      const valorTexto = celulas[2].textContent.replace("R$", "").trim().replace(".", "").replace(",", ".");
+  
+      document.getElementById("editData").value = dataTexto;
+      document.getElementById("editTipo").value = tipo;
+      document.getElementById("editValor").value = parseFloat(valorTexto);
+      document.getElementById("editIndex").value = Array.from(linha.parentNode.children).indexOf(linha);
+  
+      new bootstrap.Modal(document.getElementById('modalEditar')).show();
+    }
+  
+    // Salvar alterações
+    document.getElementById("formEditar").addEventListener("submit", function (e) {
+      e.preventDefault();
+  
+      const index = document.getElementById("editIndex").value;
+      const novaData = document.getElementById("editData").value.split("-").reverse().join("/");
+      const novoTipo = document.getElementById("editTipo").value;
+      const novoValor = parseFloat(document.getElementById("editValor").value).toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL"
+      });
+  
+      const linha = document.querySelectorAll("tbody")[1].rows[index];
+      linha.cells[0].textContent = novaData;
+      linha.cells[1].textContent = novoTipo;
+      linha.cells[2].textContent = novoValor;
+  
+      bootstrap.Modal.getInstance(document.getElementById('modalEditar')).hide();
+    });
+  </script>  
+</body>
+</html>
