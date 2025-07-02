@@ -55,6 +55,13 @@ input, select {
   box-sizing: border-box;
 }
 
+/* h3 */
+.login h3 {
+    font-size: 14px;
+    line-height: 0.2;
+}
+
+
 /* Botões */
 button, .btn {
   padding: 10px 15px;
