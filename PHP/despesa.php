@@ -64,7 +64,7 @@ include 'conexao.php';
 
     <label for='Dependente'>Dependente:</label>
     <select name='txtdependente' id='dependente' class='form-select'>
-      <option value=''>--Selecione--</option>
+      <option value=''>Nenhum</option>
   ";
 	  $dependentes = "SELECT * from dependente where fk_usuario = $id order by nome_dependente asc";
     $queryDependente = mysqli_query($conn, $dependentes);
@@ -178,6 +178,7 @@ echo "
             <th>Categoria</th>
             <th>Tipo Pagamento</th>
             <th>Valor (R$)</th>
+            <th class='text-center'>Editar</th>
             <th class='text-center'>Excluir</th>
           </tr>
         </thead>
@@ -201,13 +202,31 @@ while ($despesa = mysqli_fetch_assoc($queryDespesas)) {
         <td>$nomeCategoria</td>
         <td>$nomePagamento</td>
         <td>R$ $valorDespesa</td>
+
+        <td class='text-center'>
+          <button 
+            type='button' 
+            class='btn btn-warning btn-sm'
+            onclick='abrirModalEdicao(
+              $idDespesa, 
+              \"".addslashes($nomeDespesa)."\", 
+              \"$despesa[fk_dependente]\", 
+              \"$despesa[fk_categoria]\", 
+              \"$despesa[fk_tipo_pagamento]\", 
+              \"$despesa[valor_despesa]\", 
+              \"$despesa[data_despesa]\"
+            )'>
+            Editar
+          </button>
+        </td>
+
         <td class='text-center'>
           <form action='excluiDespesa.php' method='POST' style='display:inline;'>
             <input type='hidden' name='idDespesa' value='$idDespesa'>
             <button type='submit' class='btn btn-danger btn-sm'>Excluir</button>
           </form>
         </td>
-      </tr>
+    </tr>
     ";
 }
 
@@ -248,6 +267,83 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 </script>
+
+<!-- MODAL EDIÇÃO DESPESA -->
+<div class="modal fade" id="modalEditarDespesa" tabindex="-1" aria-labelledby="editarDespesaLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form action="editarDespesa.php" method="POST">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editarDespesaLabel">Editar Despesa</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" name="idDespesa" id="editIdDespesa" value='$idDespesa'>
+
+          <label for="editNome" class="form-label">Nome da Despesa:</label>
+          <input type="text" class="form-control" name="editNome" id="editNome" required>
+
+          <label for="editDependente" class="form-label mt-3">Dependente:</label>
+          <select class="form-select" name="editDependente" id="editDependente">
+            <option value=''>Nenhum</option>
+            <?php
+              $deps = mysqli_query($conn, "SELECT * FROM dependente WHERE fk_usuario = $id ORDER BY nome_dependente ASC");
+              while ($d = mysqli_fetch_assoc($deps)) {
+                echo "<option value='{$d['id_dependente']}'>{$d['nome_dependente']}</option>";
+              }
+            ?>
+          </select>
+
+          <label for="editCategoria" class="form-label mt-3">Categoria:</label>
+          <select class="form-select" name="editCategoria" id="editCategoria">
+            <?php
+              $cats = mysqli_query($conn, "SELECT * FROM categoria WHERE fk_usuario = $id OR fk_usuario IS NULL ORDER BY nome_categoria ASC");
+              while ($c = mysqli_fetch_assoc($cats)) {
+                echo "<option value='{$c['id_categoria']}'>{$c['nome_categoria']}</option>";
+              }
+            ?>
+          </select>
+
+          <label for="editPagamento" class="form-label mt-3">Tipo de Pagamento:</label>
+          <select class="form-select" name="editPagamento" id="editPagamento">
+            <?php
+              $pags = mysqli_query($conn, "SELECT * FROM tipopagamento WHERE fk_usuario = $id OR fk_usuario IS NULL ORDER BY nome_pagamento ASC");
+              while ($p = mysqli_fetch_assoc($pags)) {
+                echo "<option value='{$p['id_pagamento']}'>{$p['nome_pagamento']}</option>";
+              }
+            ?>
+          </select>
+
+          <label for="editValor" class="form-label mt-3">Valor Total (R$):</label>
+          <input type="number" class="form-control" name="editValor" id="editValor" step="0.01" required>
+
+          <label for="editData" class="form-label mt-3">Data:</label>
+          <input type="date" class="form-control" name="editData" id="editData" required>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-success">Salvar Alterações</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  function abrirModalEdicao(id, nome, dependente, categoria, pagamento, valor, data) {
+    document.getElementById("editIdDespesa").value = id;
+    document.getElementById("editNome").value = nome;
+    document.getElementById("editDependente").value = dependente;
+    document.getElementById("editCategoria").value = categoria;
+    document.getElementById("editPagamento").value = pagamento;
+    document.getElementById("editValor").value = valor;
+    document.getElementById("editData").value = data;
+
+    const modal = new bootstrap.Modal(document.getElementById('modalEditarDespesa'));
+    modal.show();
+  }
+</script>
+
 
  <!-- Bootstrap JS -->
  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

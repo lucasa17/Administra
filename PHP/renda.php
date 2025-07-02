@@ -12,9 +12,10 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
 
   <!-- CSS personalizado -->
-  <link href="principal.css" rel="stylesheet" />
+  <link href="../CSS/principal.css" rel="stylesheet" />
 </head>
 <body style="padding-top: 80px;">
+
 
   <!-- HEADER -->
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top shadow">
@@ -37,7 +38,7 @@
             <a class="nav-link" href="despesa.php">Despesas</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="tela_dividas.html">Dívidas</a>
+            <a class="nav-link" href="divida.php">Dívidas</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="renda.php">Renda</a>

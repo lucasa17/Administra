@@ -12,9 +12,10 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
 
   <!-- CSS personalizado -->
-  <link href="principal.css" rel="stylesheet" />
+  <link href="../CSS/principal.css" rel="stylesheet" />
 </head>
 <body style="padding-top: 80px;">
+
 
   <!-- HEADER -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top shadow">
@@ -28,10 +29,10 @@
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ms-auto">
         <li class="nav-item">
-          <a class="nav-link" href="login.html">Login</a>
+          <a class="nav-link" href="../HTML/login.html">Login</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="dependentes.php">Cadastro Dependentes</a>
+          <a class="nav-link" href="dependente.php">Cadastro Dependentes</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="despesa.php">Despesas</a>
@@ -150,6 +151,7 @@ echo "
             <th>Tipo Pagamento</th>
             <th>Parcelas</th>
             <th>Valor Total (R$)</th>
+            <th class='text-center'>Editar</th>
             <th class='text-center'>Excluir</th>
           </tr>
         </thead>
@@ -167,21 +169,38 @@ while ($divida = mysqli_fetch_assoc($queryDividas)) {
     $idDivida = $divida['id_divida'];
 
     echo "
-      <tr>
-        <td>$dataVencimento</td>
-        <td>$nomeDivida</td>
-        <td>$credor</td>
-        <td>$categoria</td>
-        <td>$tipoPagamento</td>
-        <td>$parcelas</td>
-        <td>R$ $valor</td>
-        <td class='text-center'>
-          <form action='excluiDivida.php' method='POST' onsubmit='return confirm(\"Deseja realmente excluir esta dívida?\");'>
-            <input type='hidden' name='idDivida' value='$idDivida'>
-            <button type='submit' class='btn btn-danger btn-sm'>Excluir</button>
-          </form>
-        </td>
-      </tr>
+  <tr>
+    <td>$dataVencimento</td>
+    <td>$nomeDivida</td>
+    <td>$credor</td>
+    <td>$categoria</td>
+    <td>$tipoPagamento</td>
+    <td>$parcelas</td>
+    <td>R$ $valor</td>
+
+    <td class='text-center'>
+      <button 
+        type='button' 
+        class='btn btn-warning btn-sm'
+        onclick='abrirModalEdicao($idDivida, 
+          \"".addslashes($nomeDivida)."\", 
+          \"".addslashes($credor)."\", 
+          \"$divida[fk_categoria]\", 
+          \"$divida[fk_tipo_pagamento]\", 
+          \"$parcelas\", 
+          \"$divida[valor_divida]\", 
+          \"$divida[data_vencimento]\")'>
+        Editar
+      </button>
+    </td>
+
+    <td class='text-center'>
+      <form action='excluiDivida.php' method='POST' onsubmit='return confirm(\"Deseja realmente excluir esta dívida?\");'>
+        <input type='hidden' name='idDivida' value='$idDivida'>
+        <button type='submit' class='btn btn-danger btn-sm'>Excluir</button>
+      </form>
+    </td>
+  </tr>
     ";
 }
 
@@ -201,6 +220,78 @@ echo"
 
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  
+<!-- MODAL EDIÇÃO -->
+<div class="modal fade" id="modalEditarDivida" tabindex="-1" aria-labelledby="editarDividaLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form action="editarDivida.php" method="POST">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editarDividaLabel">Editar Dívida</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" name="idDivida" id="editIdDivida">
+          <label for="editNome" class="form-label">Nome da Dívida:</label>
+          <input type="text" class="form-control" name="editNome" id="editNome" required>
+
+          <label for="editCredor" class="form-label mt-3">Credor:</label>
+          <input type="text" class="form-control" name="editCredor" id="editCredor">
+
+          <label for="editCategoria" class="form-label mt-3">Categoria:</label>
+          <select class="form-select" name="editCategoria" id="editCategoria">
+            <?php
+              $cat = mysqli_query($conn, "SELECT * FROM categoriaDivida WHERE fk_usuario = $id OR fk_usuario IS NULL ORDER BY nome_categoria ASC");
+              while ($c = mysqli_fetch_assoc($cat)) {
+                echo "<option value='{$c['id_categoria']}'>{$c['nome_categoria']}</option>";
+              }
+            ?>
+          </select>
+
+          <label for="editPagamento" class="form-label mt-3">Tipo de Pagamento:</label>
+          <select class="form-select" name="editPagamento" id="editPagamento">
+            <?php
+              $pag = mysqli_query($conn, "SELECT * FROM tipopagamento WHERE fk_usuario = $id OR fk_usuario IS NULL ORDER BY nome_pagamento ASC");
+              while ($p = mysqli_fetch_assoc($pag)) {
+                echo "<option value='{$p['id_pagamento']}'>{$p['nome_pagamento']}</option>";
+              }
+            ?>
+          </select>
+
+          <label for="editParcelas" class="form-label mt-3">Parcelas:</label>
+          <input type="number" class="form-control" name="editParcelas" id="editParcelas" min="1" required>
+
+          <label for="editValor" class="form-label mt-3">Valor Total (R$):</label>
+          <input type="number" class="form-control" name="editValor" id="editValor" step="0.01" required>
+
+          <label for="editData" class="form-label mt-3">Data de Vencimento:</label>
+          <input type="date" class="form-control" name="editData" id="editData" required>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-success">Salvar Alterações</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  function abrirModalEdicao(id, nome, credor, categoria, tipoPagamento, parcelas, valor, data) {
+    document.getElementById("editIdDivida").value = id;
+    document.getElementById("editNome").value = nome;
+    document.getElementById("editCredor").value = credor;
+    document.getElementById("editCategoria").value = categoria;
+    document.getElementById("editPagamento").value = tipoPagamento;
+    document.getElementById("editParcelas").value = parcelas;
+    document.getElementById("editValor").value = valor;
+    document.getElementById("editData").value = data;
+
+    const modal = new bootstrap.Modal(document.getElementById('modalEditarDivida'));
+    modal.show();
+  }
+</script>
 
   <!-- Script funcional -->
   <script>
