@@ -12,7 +12,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
 
   <!-- CSS personalizado -->
-  <link href="principal.css" rel="stylesheet" />
+  <link href="../CSS/principal.css" rel="stylesheet" />
 </head>
 <body style="padding-top: 80px;">
 
@@ -30,25 +30,24 @@
   <div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
     <div class="col-md-6 col-lg-5 bg-white p-4 rounded shadow-sm">
       <h3 class="text-center mb-4">Login</h3>
-      <form id="formLogin" action="../PHP/login.php" method="post">
+      <form id="formLogin" action="#" method="post" onsubmit="return validarSenha()">
         <div class="mb-3">
           <label for="txtemail" class="form-label">E-mail</label>
           <input type="email" class="form-control" id="txtemail" name="txtemail" placeholder="Digite seu e-mail" required>
         </div>
         <div class="mb-3">
-          <label for="txtsenha" class="form-label">Senha</label>
-          <input type="password" class="form-control" id="txtsenha" name="txtpassword" placeholder="Digite sua senha" required>
-          <div class="form-text mt-1">
-            A senha deve ter pelo menos 8 caracteres, incluindo letras e números.
+            <label for="txtsenha" class="form-label">Senha</label>
+            <input type="password" class="form-control" id="txtsenha" name="txtpassword" placeholder="Digite sua senha" required>
+            <div class="form-text mt-1">
+              A senha deve ter pelo menos 8 caracteres, incluindo letras e números.
+            </div>
+            <div id="erroSenha" style="color: red; display: none;">Senha inválida. Deve ter pelo menos 8 caracteres e conter letras e números.</div>
           </div>
-          <div id="erroSenha" style="color: red; display: none;">Senha inválida. Deve ter pelo menos 8 caracteres e conter letras e números.</div>
-        </div>
-        <h3 class="text-center mb-4 cadastro-login">Não tem cadastro? <a href="cadastro.html">Cadastre-se</a> </h3>
-        <div class="d-grid mt-4">
-          <button type="submit" class="btn btn-success">Entrar</button>
-        </div>
+          <h3 class="text-center mb-4 cadastro-login">Não tem cadastro? <a href="cadastro.html">Cadastre-se</a> </h3>
+          <div class="d-grid mt-4">
+            <button type="submit" class="btn btn-success">Entrar</button>
+          </div>
       </form>
-      <h3>Não tem cadastro? <a href="cadastro.html">Cadastre-se</a> </h3><br>
     </div>
   </div>
 
