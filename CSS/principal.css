@@ -55,13 +55,6 @@ input, select {
   box-sizing: border-box;
 }
 
-/* h3 */
-.login h3 {
-    font-size: 14px;
-    line-height: 0.2;
-}
-
-
 /* Botões */
 button, .btn {
   padding: 10px 15px;
@@ -90,6 +83,12 @@ th, td {
 
 th {
   background-color: #eee;
+}
+
+/* h3 */
+.cadastro-login {
+    font-size: 14px;
+    line-height: 0.2;
 }
 
 /* Footer */
