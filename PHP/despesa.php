@@ -1,3 +1,23 @@
+<?php
+session_start();
+include 'conexao.php';
+
+if(empty($_SESSION['ID_USER'])){
+
+  echo"	
+      <div id='loadingOverlay'>
+          <div id='loadingCard'>
+          <h1>Administra</h1>
+          <img src='https://cdn.dribbble.com/users/2469324/screenshots/6538803/comp_3.gif' alt='Carregando...' />
+          <strong><p class='mt-3'>Usuário não esta logado</p></strong>
+          </div>
+      </div>
+      ";        
+  header("refresh: 3.5; url=../index.html");
+}
+  
+?>
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -7,6 +27,7 @@
 
   <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="../CSS/carregando.css" rel="stylesheet" />
 
   <!-- Ícones Bootstrap -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
@@ -19,8 +40,8 @@
   <!-- HEADER -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top shadow">
   <div class="container">
-    <a class="navbar-brand fw-bold" href="index.html">Administra</a> <!-- Link para página principal -->
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+  <a class="navbar-brand fw-bold" href="">Administra</a>
+  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
             aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -53,9 +74,7 @@
 </nav>
 
 <?php
-session_start();
-include 'conexao.php';
-
+ 
 	$id = $_SESSION['ID_USER'];
 
   echo"
