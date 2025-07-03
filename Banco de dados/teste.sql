@@ -13,7 +13,6 @@ INSERT INTO Divida (
     nome_divida,
     valor_divida,
     credor,
-    data_vencimento,
     data_primeira_parcela,
     parcelas,
     fk_usuario,
@@ -23,7 +22,6 @@ VALUES (
     'Fatura Nubank',
     500.00,
     'Nubank',
-    '2025-08-10',
     '2025-07-10',
     2,
     1,
@@ -34,3 +32,6 @@ INSERT INTO DividaCategoria (fk_divida, fk_categoria)
 VALUES (1, 1);
 -- Verificando tabela DividaCategoria
 SELECT * FROM DividaCategoria;
+select * from divida;
+delete from divida where id_divida = 3;
+update divida set data_primeira_parcela = '2025-07-01' where id_divida = 4;
