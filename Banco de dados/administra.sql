@@ -78,7 +78,6 @@ CREATE TABLE Dependente (
 	nome_dependente VARCHAR(50) NOT NULL,
 	relacao VARCHAR(45),
 	fk_usuario INT NOT NULL,
-	UNIQUE(nome_dependente),
 	FOREIGN KEY (fk_usuario) REFERENCES Usuario(id_usuario) ON DELETE CASCADE ON UPDATE CASCADE
 );
 -- Despesas que o usuário está pagando
