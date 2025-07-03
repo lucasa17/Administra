@@ -162,6 +162,8 @@ echo "
         <tbody>
 ";
 
+$totalDividas = 0;
+
 while ($divida = mysqli_fetch_assoc($queryDividas)) {
     $dataVencimento = date("d/m/Y", strtotime($divida['data_vencimento']));
     $nomeDivida = htmlspecialchars($divida['nome_divida']);
@@ -169,8 +171,10 @@ while ($divida = mysqli_fetch_assoc($queryDividas)) {
     $categoria = $divida['nome_categoria'] ?? '-';
     $tipoPagamento = $divida['nome_pagamento'] ?? '-';
     $parcelas = $divida['parcelas'];
-    $valor = number_format($divida['valor_divida'], 2, ',', '.');
     $idDivida = $divida['id_divida'];
+
+    $valor = number_format($divida['valor_divida'], 2, ',', '.');
+    $totalDividas += $divida['valor_divida'];
 
     echo "
   <tr>
@@ -208,10 +212,18 @@ while ($divida = mysqli_fetch_assoc($queryDividas)) {
     ";
 }
 
-echo "
-        </tbody>
+$valorTotalFormatado = number_format($totalDividas, 2, ',', '.');
+
+
+echo " </tbody>
       </table>
     </div>
+  </div>
+</div>
+
+<div class='container mt-3'>
+  <div class='alert alert-info text-end fw-bold'>
+      Total de Dívidas: R$ $valorTotalFormatado 
   </div>
 </div>
 ";

@@ -190,14 +190,19 @@ echo "
         <tbody>
 ";
 
+$totalDespesas = 0;
+
 while ($despesa = mysqli_fetch_assoc($queryDespesas)) {
     $dataDespesa = date("d/m/Y", strtotime($despesa['data_despesa']));
     $nomeDespesa = htmlspecialchars($despesa['nome_despesa']);
     $nomeDependente = $despesa['nome_dependente'] ?? '-';
     $nomeCategoria = $despesa['nome_categoria'] ?? '-';
     $nomePagamento = $despesa['nome_pagamento'] ?? '-';
-    $valorDespesa = number_format($despesa['valor_despesa'], 2, ',', '.');
+    $valorDespesaFloat = floatval($despesa['valor_despesa']);
+    $valorDespesa = number_format($valorDespesaFloat, 2, ',', '.');
     $idDespesa = $despesa['id_despesa'];
+
+    $totalDespesas += $valorDespesaFloat;
 
     echo "
       <tr>
@@ -207,37 +212,39 @@ while ($despesa = mysqli_fetch_assoc($queryDespesas)) {
         <td>$nomeCategoria</td>
         <td>$nomePagamento</td>
         <td>R$ $valorDespesa</td>
-
         <td class='text-center'>
-          <button 
-            type='button' 
-            class='btn btn-warning btn-sm'
-            onclick='abrirModalEdicao(
+          <button type='button' class='btn btn-warning btn-sm' onclick='abrirModalEdicao(
               $idDespesa, 
               \"".addslashes($nomeDespesa)."\", 
               \"$despesa[fk_dependente]\", 
               \"$despesa[fk_categoria]\", 
               \"$despesa[fk_tipo_pagamento]\", 
               \"$despesa[valor_despesa]\", 
-              \"$despesa[data_despesa]\"
-            )'>
+              \"$despesa[data_despesa]\")'>
             Editar
           </button>
         </td>
-
         <td class='text-center'>
           <form action='excluiDespesa.php' method='POST' style='display:inline;'>
             <input type='hidden' name='idDespesa' value='$idDespesa'>
             <button type='submit' class='btn btn-danger btn-sm'>Excluir</button>
           </form>
         </td>
-    </tr>
+      </tr>
     ";
 }
+
+$valorTotalFormatado = number_format($totalDespesas, 2, ',', '.');
 
 echo "
         </tbody>
       </table>
+    </div>
+
+    <!-- Total de despesas -->
+  <div class='container mt-3'>
+    <div class='alert alert-info text-end fw-bold'>
+      Total de Despesas: R$ $valorTotalFormatado 
     </div>
   </div>
 </div>
