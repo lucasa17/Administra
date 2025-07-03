@@ -28,11 +28,8 @@
 
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ms-auto">
-        <li class="nav-item">
-          <a class="nav-link" href="../HTML/login.html">Login</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="dependente.php">Cadastro Dependentes</a>
+       <li class="nav-item">
+          <a class="nav-link" href="dependente.php">Dependentes</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="despesa.php">Despesas</a>
@@ -42,6 +39,13 @@
         </li>
         <li class="nav-item">
             <a class="nav-link" href="renda.php">Renda</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="meta.php">Metas</a>
+        <li class="nav-item">
+            <form action='sair.php' method='POST' style='display:inline;'>
+            <button type='submit' class='btn btn-danger btn-sm' Style='Background-color:Red; Border-radius: 20%'>Sair</button>
+          </form>        
         </li>
       </ul>
     </div>

@@ -11,5 +11,5 @@ include 'conexao.php';
     $insertMeta = "insert into Poupanca (objetivo, valor_atual, valor_meta, fk_usuario) values ('$objetivo', $aporteInicial, $valorFinal, $id)";
     $meta = mysqli_query($conn, $insertMeta);
 
-    header("refresh: 0; url=metas.php");
+    header("refresh: 0; url=meta.php");
 ?>

@@ -28,21 +28,26 @@
 
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ms-auto">
-          <li class="nav-item">
-            <a class="nav-link" href="../HTML/login.html">Login</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="dependente.php">Cadastro Dependentes</a>
-          </li>
-          <li class="nav-item">
+        <li class="nav-item">
+          <a class="nav-link" href="dependente.php">Dependentes</a>
+        </li>
+        <li class="nav-item">
             <a class="nav-link" href="despesa.php">Despesas</a>
-          </li>
-          <li class="nav-item">
+        </li>
+        <li class="nav-item">
             <a class="nav-link" href="divida.php">Dívidas</a>
-          </li>
-          <li class="nav-item">
+        </li>
+        <li class="nav-item">
             <a class="nav-link" href="renda.php">Renda</a>
-          </li>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="meta.php">Metas</a>
+        </li>
+        <li class="nav-item">
+            <form action='sair.php' method='POST' style='display:inline;'>
+            <button type='submit' class='btn btn-danger btn-sm' Style='Background-color:Red; Border-radius: 20%'>Sair</button>
+          </form>        
+        </li>
         </ul>
       </div>
     </div>
@@ -105,7 +110,7 @@
         <table class='table table-bordered align-middle'>
           <thead class='table-light'>
             <tr>
-              <th>Fonte de Renda</th>
+              <th class='text-center'>Fonte de Renda</th>
               <th class='text-center'>Excluir</th>
             </tr>
           </thead>
@@ -116,17 +121,17 @@
     $nomeRenda = htmlspecialchars($fonte['fonte_da_renda']);
     $idFonte = $fonte['id_renda'];
   
-    echo "
-      <tr>
-        <td>$nomeRenda</td>
-        <td class='text-center'>
-          <form action='excluiFonteRenda.php' method='POST' style='display:inline;'>
-            <input type='hidden' name='idFonte' value='$idFonte'>
-            <button type='submit' class='btn btn-danger btn-sm'>Excluir</button>
-          </form>
-        </td>
-      </tr>
-    ";
+echo "
+  <tr>
+    <td class='text-center'>$nomeRenda</td>
+    <td class='text-center'>
+      <form action='excluiFonteRenda.php' method='POST' style='display:inline;'>
+        <input type='hidden' name='idRenda' value='$idFonte'>
+        <button type='submit' class='btn btn-danger btn-sm'>Excluir</button>
+      </form>
+    </td>
+  </tr>
+";
   }
   
   echo "
@@ -149,9 +154,10 @@
           <table class='table table-bordered align-middle'>
             <thead class='table-light'>
               <tr>
-                <th>Data</th>
-                <th>Tipo de Renda</th>
-                <th>Valor (R$)</th>
+                <th class='text-center'>Data</th>
+                <th class='text-center'>Tipo de Renda</th>
+                <th class='text-center'>Valor (R$)</th>
+                <th class='text-center'>Editar</th>
                 <th class='text-center'>Excluir</th>
               </tr>
             </thead>
@@ -167,20 +173,31 @@
       $fonteQuery = "SELECT fonte_da_renda FROM FonteRenda WHERE id_renda = $fonteRendaId";
       $fonteResult = mysqli_query($conn, $fonteQuery);
       $fonteRenda = mysqli_fetch_assoc($fonteResult)['fonte_da_renda'];
-    
-      echo "
-        <tr>
-          <td>$dataRenda</td>
-          <td>$fonteRenda</td>
-          <td>R$ $valorRenda</td>
-          <td class='text-center'>
-            <form action='excluiRenda.php' method='POST' style='display:inline;'>
-              <input type='hidden' name='idRenda' value='$idRenda'>
-              <button type='submit' class='btn btn-danger btn-sm'>Excluir</button>
-            </form>
-          </td>
-        </tr>
-      ";
+    echo "
+  <tr>
+    <td class='text-center'>$dataRenda</td>
+    <td class='text-center'>$fonteRenda</td>
+    <td class='text-center'>R$ $valorRenda</td>
+    <td class='text-center'>
+      <button type='button' class='btn btn-sm btn-primary'
+        onclick='abrirModalEdicao(this)'
+        data-id='$idRenda'
+        data-data='{$renda['data_renda']}'
+        data-valor='{$renda['valor_renda']}'
+        data-fonte-id='$fonteRendaId'>
+        <i class='bi bi-pencil-square'></i>
+      </button>
+    </td>
+    <td class='text-center'>
+      <form action='excluiRenda.php' method='POST' style='display:inline;'>
+        <input type='hidden' name='idRenda' value='$idRenda'>
+        <button type='submit' class='btn btn-danger btn-sm'>        
+          <i class='bi bi-trash'></i>
+        </button>
+      </form>
+    </td>
+  </tr>
+";
     }
     
     echo "
@@ -192,8 +209,62 @@
     ";
   ?>
 
+<!-- MODAL DE EDIÇÃO DE RENDA -->
+<div class="modal fade" id="modalEditar" tabindex="-1" aria-labelledby="modalEditarLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form class="modal-content" method="POST" action="editarRenda.php">
+      <div class="modal-header">
+        <h5 class="modal-title">Editar Renda</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" name="idRenda" id="editIdRenda">
+
+        <label for="editData" class="form-label">Data</label>
+        <input type="date" name="data" id="editData" class="form-control" required>
+
+        <label for="editFonte" class="form-label mt-3">Fonte de Renda</label>
+        <select name="fonte" id="editFonte" class="form-select" required>
+          <option value="">--Selecione--</option>
+          <?php
+            $querySelectFontes = mysqli_query($conn, "SELECT * FROM FonteRenda WHERE fk_usuario = $id OR fk_usuario IS NULL ORDER BY fonte_da_renda ASC");
+            while ($fonte = mysqli_fetch_assoc($querySelectFontes)) {
+              echo "<option value='{$fonte['id_renda']}'>{$fonte['fonte_da_renda']}</option>";
+            }
+          ?>
+        </select>
+
+        <label for="editValor" class="form-label mt-3">Valor</label>
+        <input type="number" name="valor" id="editValor" class="form-control" step="0.01" required>
+      </div>
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-success">Salvar</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+function abrirModalEdicao(botao) {
+  const id = botao.getAttribute('data-id');
+  const data = botao.getAttribute('data-data');
+  const valor = botao.getAttribute('data-valor');
+  const fonteId = botao.getAttribute('data-fonte-id');
+
+  document.getElementById('editIdRenda').value = id;
+  document.getElementById('editData').value = data;
+  document.getElementById('editValor').value = valor;
+  document.getElementById('editFonte').value = fonteId;
+
+  new bootstrap.Modal(document.getElementById('modalEditar')).show();
+}
+</script>
+
 
   <script>
     document.addEventListener('DOMContentLoaded', function () {

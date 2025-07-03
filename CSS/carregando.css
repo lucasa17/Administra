@@ -1,0 +1,37 @@
+ body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, lightblue, #e9ecef);
+      height: 100vh;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    #loadingOverlay {
+      position: fixed;
+      inset: 0;
+      background-color: inherit;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+
+    #loadingCard {
+      background-color: white;
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    #loadingCard h1 {
+      margin-bottom: 20px;
+      font-size: 2rem;
+      font-weight: bold;
+      color: #198754; /* verde Bootstrap */
+    }
+
+    #loadingCard img {
+      width: 300px;
+      height: 150px;
+    }

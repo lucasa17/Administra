@@ -12,7 +12,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
 
   <!-- CSS personalizado -->
-  <link href="principal.css" rel="stylesheet" />
+  <link href="../CSS/principal.css" rel="stylesheet" />
 </head>
 <body style="padding-top: 80px;">
 
@@ -28,7 +28,7 @@
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ms-auto">
         <li class="nav-item">
-          <a class="nav-link" href="dependentes.html">Cadastro Dependentes</a>
+          <a class="nav-link" href="dependente.php">Dependentes</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="despesa.php">Despesas</a>
@@ -43,7 +43,9 @@
             <a class="nav-link" href="meta.php">Metas</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link">Sair</a>
+            <form action='sair.php' method='POST' style='display:inline;'>
+            <button type='submit' class='btn btn-danger btn-sm' Style='Background-color:Red; Border-radius: 20%'>Sair</button>
+          </form>        
         </li>
       </ul>
     </div>
@@ -78,6 +80,122 @@ echo"
         </form>
     </div>
     </div>
-";
+  ";
 
+  $selectMeta = "SELECT * from poupanca where fk_usuario = $id order by objetivo asc";
+  $queryMeta = mysqli_query($conn, $selectMeta);
+
+  echo"
+  <div class='container mt-5'>
+  <div class='consulta-section bg-white p-4 rounded shadow-sm'>
+    <!-- Tabela com resultados -->
+    <div class='mt-4'>
+      <table class='table table-bordered align-middle'>
+        <thead class='table-light'>
+          <tr>
+            <th>Objetivo</th>
+            <th>Valor Inicial (R$)</th>
+            <th>Valor Final (R$)</th>
+            <th class='text-center'>Editar</th>
+            <th class='text-center'>Excluir</th>
+          </tr>
+        </thead>
+  ";
+
+  while($pegaMeta = mysqli_fetch_assoc($queryMeta)) {
+    $objetivo = $pegaMeta['objetivo'];
+    $valorAtual = $pegaMeta['valor_atual'];
+    $valorMeta = $pegaMeta['valor_meta'];
+    $idMeta = $pegaMeta['id_poupanca'];
+
+  echo "
+<tr data-id-meta='$idMeta'>
+  <td>$objetivo</td>
+  <td>$valorAtual</td>
+  <td>$valorMeta</td>
+  <td class='text-center'>
+    <button type='submit' class='btn btn-sm btn-danger'>
+      <i class='bi bi-pencil-square' style='cursor:pointer; font-size: 1.2rem;' 
+        onclick='abrirModalEdicao(this)'></i>
+    </button>
+  </td>
+  <td class='text-center'>
+    <form action='excluiMeta.php' method='POST' style='display:inline;'>
+      <input type='hidden' name='idMeta' value='$idMeta'>
+      <button type='submit' class='btn btn-sm btn-danger'>
+        <i class='bi bi-trash'></i>
+      </button>
+    </form>
+  </td>
+</tr>";
+    }
+echo "
+      </table>
+    </div>
+  </div>
+</div>
+";
 ?>
+  </div>
+</div>
+<!-- Modal para edição -->
+<div class="modal fade" id="modalEditarMeta" tabindex="-1" aria-labelledby="modalEditarMetaLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+    <form action="editarMeta.php" method="POST" id="formEditarMeta">
+      <input type="hidden" name="idMeta" id="editIdMeta">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalEditarMetaLabel">Editar Meta</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body">
+          <label for="editObjetivo" class="form-label">Objetivo:</label>
+          <input type="text" id="editObjetivo" name="editObjetivo" class="form-control" required />
+
+          <label for="editValorInicial" class="form-label mt-3">Valor Inicial (R$):</label>
+          <input type="number" id="editValorInicial" name="editValorInicial" class="form-control" min="0" step="0.01" required />
+
+          <label for="editValorFinal" class="form-label mt-3">Valor Final (R$):</label>
+          <input type="number" id="editValorFinal" name="editValorFinal" class="form-control" min="0" step="0.01" required />
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-success">Salvar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+  // Função para abrir modal e preencher campos com dados da linha
+function abrirModalEdicao(elemento) {
+  const linha = elemento.closest('tr');
+  const objetivo = linha.cells[0].textContent;
+  const valorInicial = linha.cells[1].textContent;
+  const valorFinal = linha.cells[2].textContent;
+  const idMeta = linha.dataset.idMeta;
+
+  document.getElementById('editObjetivo').value = objetivo.trim();
+  document.getElementById('editValorInicial').value = valorInicial.trim();
+  document.getElementById('editValorFinal').value = valorFinal.trim();
+  document.getElementById('editIdMeta').value = idMeta;
+
+  const modal = new bootstrap.Modal(document.getElementById('modalEditarMeta'));
+  modal.show();
+}
+</script>
+
+<!-- FOOTER -->
+<footer class="mt-4">
+  <div class="container text-center">
+    <p class="mb-1">© 2025 Administra - Todos os direitos reservados</p>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -1,11 +1,15 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Administra - Login</title>
 
-    <title>Administra - Login</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="../CSS/carregando.css" rel="stylesheet" />
+  
+
 </head>
 <body>
 
@@ -46,15 +50,28 @@ include 'conexao.php';
         $_SESSION['ID_USER'] = $row['id_usuario'];
 
 
-		echo "	
-			<h1>Entrando</h1>
-		";
-
-		header("refresh: 2; url=despesa.php");
-
+		echo"	
+        <div id='loadingOverlay'>
+            <div id='loadingCard'>
+            <h1>Administra</h1>
+            <img src='https://i.gifer.com/YCZH.gif' alt='Carregando...' />
+            <strong><p class='mt-3'>Entrando...</p></strong>
+            </div>
+        </div>
+        ";
+        header("refresh: 2; url=despesa.php");
 	} 
     else {
-		echo "<h1>Usuário ou senha inválidos</h1>";
+
+        echo"
+        <div class='container d-flex justify-content-center align-items-center' style='min-height: 80vh;'>
+            <div id='loadingCard'>
+            <h1>Administra</h1>
+            <img src='https://i.gifer.com/YCZH.gif' alt='Carregando...' />
+            <strong><p class='mt-3'>Usuário ou senha inválidos</p></strong>
+            </div>
+        </div>
+        ";
         header("refresh: 2; url=../HTML/login.html");
     }
 

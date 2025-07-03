@@ -12,7 +12,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
 
   <!-- CSS personalizado -->
-  <link href="principal.css" rel="stylesheet" />
+  <link href="../CSS/principal.css" rel="stylesheet" />
 </head>
 <body style="padding-top: 80px;">
 
@@ -28,19 +28,24 @@
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ms-auto">
         <li class="nav-item">
-          <a class="nav-link" href="../HTML/login.html">Login</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="dependente.php">Cadastro Dependentes</a>
+          <a class="nav-link" href="dependente.php">Dependentes</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="despesa.php">Despesas</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="tela_dividas.html">Dívidas</a>
+            <a class="nav-link" href="divida.php">Dívidas</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="renda.php ">Renda</a>
+            <a class="nav-link" href="renda.php">Renda</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="meta.php">Metas</a>
+        </li>
+         <li class="nav-item">
+            <form action='sair.php' method='POST' style='display:inline;'>
+            <button type='submit' class='btn btn-danger btn-sm' Style='Background-color:Red; Border-radius: 20%'>Sair</button>
+          </form>        
         </li>
       </ul>
     </div>
@@ -86,18 +91,23 @@ include 'conexao.php';
         $relacaoDependente = $pegaDependente['relacao'];
         $idDependente = $pegaDependente['id_dependente'];
     
-    echo"
-     <li class='list-group-item' style='text-align: center;'>$nomeDependente - $relacaoDependente
+echo "
+  <li class='list-group-item d-flex justify-content-between align-items-center'>
+    <span>
+      <class='nome'>$nomeDependente - <span class='relacao'>$relacaoDependente</span>
+    </span>
+    <div>
+      <button class='btn btn-sm btn-outline-primary me-2' onclick=\"abrirModalEdicao('$idDependente', '$nomeDependente', '$relacaoDependente')\">
+        <i class='bi bi-pencil-square'></i>
+      </button>
       <form id='form-excluir-$idDependente' action='excluiDependente.php' method='POST' style='display:inline;'>
         <input type='hidden' name='idDependente' value='$idDependente'>
-        <button type='button' style='border:none; background:none; padding:0; cursor:pointer;' onclick='confirmarExclusao($idDependente);'>
-            <img src='https://cdn-icons-png.flaticon.com/512/1214/1214428.png' 
-                alt='Excluir' 
-                class='icon-excluir' 
-                style='width:24px; height:24px;'>
+        <button type='submit' class='btn btn-sm btn-outline-danger'>
+          <i class='bi bi-trash'></i>
         </button>
       </form>
-    </li>
+    </div>
+  </li>
     ";
     }
 ?>
@@ -106,16 +116,49 @@ include 'conexao.php';
       </div>
     </div>
   </main>
-  
-  <script>
-    function confirmarExclusao(idDependente) {
-        if (confirm("Tem certeza que deseja excluir este dependente?")) {
-            // Enviar o formulário correspondente
-            document.getElementById('form-excluir-' + idDependente).submit();
-        }
-    }
-  </script>
-   <!-- Bootstrap JS -->
+
+<!-- MODAL DE EDIÇÃO -->
+<div class="modal fade" id="modalEditar" tabindex="-1" aria-labelledby="modalEditarLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form id="formEditar" action="editarDependente.php" method="POST">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalEditarLabel">Editar Dependente</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="editId" name="idDependente">
+          <div class="mb-3">
+            <label for="editNome" class="form-label">Nome</label>
+            <input type="text" id="editNome" name="editNome" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label for="editRelacao" class="form-label">Relação</label>
+            <input type="text" id="editRelacao" name="editRelacao" class="form-control" required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-success">Salvar Alterações</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+<script>
+  function abrirModalEdicao(id, nome, relacao) {
+    document.getElementById("editId").value = id;
+    document.getElementById("editNome").value = nome;
+    document.getElementById("editRelacao").value = relacao;
+
+    const modal = new bootstrap.Modal(document.getElementById('modalEditar'));
+    modal.show();
+  }
+</script>
+
+<!-- Bootstrap JS -->
    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <!-- FOOTER -->
