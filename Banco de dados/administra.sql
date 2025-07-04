@@ -43,8 +43,11 @@ CREATE TABLE Divida (
 	valor_divida DECIMAL(10,2),
     credor varchar(100),
 	data_vencimento DATE,
+    mes_inicio INT,
+    mes_final INT,
+    valor_parcela DECIMAL(10,2),
 	data_primeira_parcela DATE NOT NULL,
-	parcelas int,
+	parcelas INT NOT NULL,
 	fk_usuario INT NOT NULL,
 	fk_categoria INT NOT NULL,
 	fk_tipo_pagamento INT NOT NULL,
@@ -68,6 +71,7 @@ CREATE TABLE Poupanca (
 	objetivo VARCHAR(50),
 	valor_atual DECIMAL(10,2) NOT NULL,
 	valor_meta DECIMAL(10,2) NOT NULL,
+    meses_ate_meta INT,
 	fk_usuario INT,
 	UNIQUE (objetivo),
 	FOREIGN KEY (fk_usuario) REFERENCES Usuario(id_usuario)  ON DELETE CASCADE ON UPDATE CASCADE
@@ -94,4 +98,15 @@ CREATE TABLE Despesa (
 	FOREIGN KEY (fk_usuario) REFERENCES Usuario(id_usuario) ON DELETE CASCADE ON UPDATE CASCADE,
 	FOREIGN KEY (fk_tipo_pagamento) REFERENCES TipoPagamento(id_pagamento)  ON DELETE CASCADE ON UPDATE CASCADE,
 	FOREIGN KEY (fk_categoria) REFERENCES Categoria(id_categoria) ON DELETE CASCADE ON UPDATE CASCADE
+);
+-- Tabela para um resumo mensal
+CREATE TABLE ResumoMensal (
+  id_resumo INT AUTO_INCREMENT PRIMARY KEY,
+  ano INT,
+  mes INT,
+  total_receita DECIMAL(10,2),
+  total_despesa DECIMAL(10,2),
+  saldo DECIMAL(10,2),
+  fk_usuario INT,
+  UNIQUE (ano, mes, fk_usuario)
 );
