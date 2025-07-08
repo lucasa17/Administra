@@ -149,6 +149,62 @@ if(empty($_SESSION['ID_USER'])){
                 <button type='submit' class='btn btn-success mt-4'>Salvar Dívida</button>
             </form>
 ";
+?>
+
+<!-- Filtro de dívidas -->
+<div class="container mt-4">
+  <div class="form-section bg-white p-4 rounded shadow-sm">
+    <h3>Filtrar Dívidas</h3>
+    <form id="filtro" class="row g-3">
+      <div class="col-md-6">
+        <label for="filtroPessoa" class="form-label">Credor:</label>
+        <select id="filtroPessoa" class="form-select">
+          <option value="">--Todos--</option>
+          <?php
+            // Carregar credores dinamicamente do banco
+            $queryCredores = "SELECT DISTINCT credor FROM divida WHERE fk_usuario = $id";
+            $resultCredores = mysqli_query($conn, $queryCredores);
+            while ($credor = mysqli_fetch_assoc($resultCredores)) {
+                echo "<option value='" . htmlspecialchars($credor['credor']) . "'>" . htmlspecialchars($credor['credor']) . "</option>";
+            }
+          ?>
+        </select>
+      </div>
+
+      <div class="col-md-6">
+        <label for="filtroTipo" class="form-label">Tipo de Pagamento:</label>
+        <select id="filtroTipo" class="form-select">
+          <option value="">--Todos--</option>
+          <?php
+            // Carregar tipos de pagamento dinamicamente do banco
+            $queryTipos = "SELECT DISTINCT nome_pagamento FROM tipopagamento WHERE fk_usuario = $id";
+            $resultTipos = mysqli_query($conn, $queryTipos);
+            while ($tipo = mysqli_fetch_assoc($resultTipos)) {
+                echo "<option value='" . htmlspecialchars($tipo['nome_pagamento']) . "'>" . htmlspecialchars($tipo['nome_pagamento']) . "</option>";
+            }
+          ?>
+        </select>
+      </div>
+
+      <div class="col-md-6">
+        <label for="filtroValor" class="form-label">Valor Mínimo (R$):</label>
+        <input type="number" id="filtroValor" class="form-control" min="0" step="0.01" />
+      </div>
+
+      <div class="col-md-6">
+        <label for="filtroMes" class="form-label">Mês:</label>
+        <input type="month" id="filtroMes" class="form-control" />
+      </div>
+
+      <div class="col-12 text-end">
+        <button type="submit" class="btn btn-primary mt-3">Buscar</button>
+        <button type="button" id="limparFiltros" class="btn btn-secondary mt-3 ms-2">Limpar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<?php
 $selectDividas = "SELECT d.*, c.nome_categoria, tp.nome_pagamento
                   FROM divida d
                   LEFT JOIN categoriaDivida c ON d.fk_categoria = c.id_categoria
@@ -163,7 +219,7 @@ echo "
   <div class='form-section bg-white p-4 rounded shadow-sm'>
     <h3>Dívidas Cadastradas</h3>
     <div class='table-responsive'>
-      <table class='table table-bordered align-middle'>
+<table id='tabelaDividas' class='table table-bordered align-middle'>
         <thead class='table-light'>
           <tr>
             <th>Data Vencimento</th>
@@ -372,7 +428,53 @@ echo"
 
   </script>
   
-  <!-- FOOTER -->
+  <script>
+document.getElementById("filtro").addEventListener("submit", function(e) {
+  e.preventDefault();
+
+  const filtroPessoa = document.getElementById("filtroPessoa").value.toLowerCase();
+  const filtroTipo = document.getElementById("filtroTipo").value.toLowerCase();
+  const filtroValor = parseFloat(document.getElementById("filtroValor").value);
+  const filtroMes = document.getElementById("filtroMes").value;
+
+  const linhas = document.querySelectorAll("#tabelaDividas tbody tr");
+
+  linhas.forEach(linha => {
+    const credor = linha.children[2].textContent.toLowerCase();
+    const tipo = linha.children[4].textContent.toLowerCase();
+    const valorTexto = linha.children[6].textContent.replace("R$", "").trim().replace(".", "").replace(",", ".");
+    const valor = parseFloat(valorTexto);
+    const data = linha.children[0].textContent.split("/"); // formato dd/mm/yyyy
+    const dataFormatada = `${data[2]}-${data[1]}`; // yyyy-mm
+
+    let mostrar = true;
+
+    // Filtros de credor, tipo de pagamento, valor e mês
+    if (filtroPessoa && !credor.includes(filtroPessoa)) mostrar = false;
+    if (filtroTipo && !tipo.includes(filtroTipo)) mostrar = false;
+    if (!isNaN(filtroValor) && valor < filtroValor) mostrar = false;
+    if (filtroMes && filtroMes !== dataFormatada) mostrar = false;
+
+    linha.style.display = mostrar ? "" : "none";
+  });
+});
+
+document.getElementById("limparFiltros").addEventListener("click", function() {
+  // Limpar filtros
+  document.getElementById("filtroPessoa").value = "";
+  document.getElementById("filtroTipo").value = "";
+  document.getElementById("filtroValor").value = "";
+  document.getElementById("filtroMes").value = "";
+
+  // Exibir todas as linhas da tabela
+  const linhas = document.querySelectorAll("#tabelaDividas tbody tr");
+  linhas.forEach(linha => {
+    linha.style.display = "";
+  });
+});
+</script>
+
+<!-- FOOTER -->
   <footer class="mt-4">
   <div class="container text-center">
     <p class="mb-1">© 2025 Administra - Todos os direitos reservados</p>
