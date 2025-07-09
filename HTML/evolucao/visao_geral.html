@@ -278,62 +278,58 @@
       2023: [3000, 3200, 3300, 3400, 3500, 3600, 3700, 3800, 3900, 4000, 4100, 4200]
     };
 
-    const graficoAnual = new Chart(ctxAnual, {
-      type: 'line',
-      data: {
-        labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
-        datasets: [{
-          label: 'Renda Mensal (R$)',
-          data: dadosPorAno[2025], 
-          fill: true,
-          backgroundColor: 'rgba(255, 99, 132, 0.2)',
-          borderColor: 'rgba(255, 99, 132, 1)',
-          tension: 0.2
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false, 
-        scales: { 
-          y: { 
-            beginAtZero: true,
-            ticks: {
-                autoSkip: true,
-                maxTicksLimit: 10
-            }
-          },
-          x: {
-            ticks: {
-                autoSkip: true,
-                maxTicksLimit: 15
-            }
-          }
-        },
-        layout: {
-            padding: {
-                left: 10,
-                right: 10,
-                top: 10,
-                bottom: 10
-            }
-        },
-        plugins: {
-            legend: {
-                display: true,
-                position: 'top',
-                labels: {
-                    boxWidth: 20
-                }
-            }
-        }
-      }
-    });
+    const gastosPorAno = {
+      2025: [3000, 3200, 3100, 3400, 3500, 3300, 0, 0, 0, 0, 0, 0],
+      2024: [2500, 2600, 2700, 2800, 2900, 3000, 3100, 3200, 3300, 3400, 3500, 3600],
+      2023: [2000, 2100, 2200, 2300, 2400, 2500, 2600, 2700, 2800, 2900, 3000, 3100]
+    };
 
-    document.getElementById('anoSelect').addEventListener('change', function() {
-      const ano = this.value;
-      graficoAnual.data.datasets[0].data = dadosPorAno[ano];
-      graficoAnual.update();
-    });
+    const graficoAnual = new Chart(ctxAnual, {
+  type: 'line',
+  data: {
+    labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+    datasets: [
+      {
+        label: 'Renda Mensal (R$)',
+        data: dadosPorAno[2025],
+        fill: true,
+        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+        borderColor: 'rgba(75, 192, 192, 1)',
+        tension: 0.2
+      },
+      {
+        label: 'Gastos Mensais (R$)',
+        data: gastosPorAno[2025],
+        fill: true,
+        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+        borderColor: 'rgba(255, 99, 132, 1)',
+        tension: 0.2
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false, 
+    scales: { 
+      y: { beginAtZero: true },
+      x: {}
+    },
+    plugins: {
+      legend: {
+        display: true,
+        position: 'top'
+      }
+    }
+  }
+});
+
+document.getElementById('anoSelect').addEventListener('change', function () {
+  const ano = this.value;
+  graficoAnual.data.datasets[0].data = dadosPorAno[ano];
+  graficoAnual.data.datasets[1].data = gastosPorAno[ano];
+  graficoAnual.update();
+});
+
 
     const ctxRenda = document.getElementById('graficoRenda').getContext('2d');
     new Chart(ctxRenda, {
