@@ -48,9 +48,6 @@ include 'conexao.php';
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ms-auto">
         <li class="nav-item">
-          <a class="nav-link" href="dependente.php">Dependentes</a>
-        </li>
-        <li class="nav-item">
             <a class="nav-link" href="despesa.php">Despesas</a>
         </li>
         <li class="nav-item">
@@ -61,6 +58,9 @@ include 'conexao.php';
         </li>
         <li class="nav-item">
             <a class="nav-link" href="meta.php">Metas</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="dependente.php">Dependentes</a>
         </li>
          <li class="nav-item">
             <form action='sair.php' method='POST' style='display:inline;'>

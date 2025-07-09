@@ -49,9 +49,6 @@ if(empty($_SESSION['ID_USER'])){
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ms-auto">
        <li class="nav-item">
-          <a class="nav-link" href="dependente.php">Dependentes</a>
-        </li>
-        <li class="nav-item">
             <a class="nav-link" href="despesa.php">Despesas</a>
         </li>
         <li class="nav-item">
@@ -62,7 +59,10 @@ if(empty($_SESSION['ID_USER'])){
         </li>
         <li class="nav-item">
             <a class="nav-link" href="meta.php">Metas</a>
+        </li>
         <li class="nav-item">
+          <a class="nav-link" href="dependente.php">Dependentes</a>
+        </li>
             <form action='sair.php' method='POST' style='display:inline;'>
             <button type='submit' class='btn btn-danger btn-sm' Style='Background-color:Red; Border-radius: 20%'>Sair</button>
           </form>        
@@ -151,6 +151,8 @@ if(empty($_SESSION['ID_USER'])){
 ";
 ?>
 
+<hr>
+
 <!-- Filtro de dívidas -->
 <div class="container mt-4">
   <div class="form-section bg-white p-4 rounded shadow-sm">
@@ -172,15 +174,18 @@ if(empty($_SESSION['ID_USER'])){
       </div>
 
       <div class="col-md-6">
-        <label for="filtroTipo" class="form-label">Tipo de Pagamento:</label>
-        <select id="filtroTipo" class="form-select">
-          <option value="">--Todos--</option>
+        <label for="filtroCategoria" class="form-label">Categoria:</label>
+        <select id="filtroCategoria" class="form-select">
+          <option value="">--Todas--</option>
           <?php
-            // Carregar tipos de pagamento dinamicamente do banco
-            $queryTipos = "SELECT DISTINCT nome_pagamento FROM tipopagamento WHERE fk_usuario = $id";
-            $resultTipos = mysqli_query($conn, $queryTipos);
-            while ($tipo = mysqli_fetch_assoc($resultTipos)) {
-                echo "<option value='" . htmlspecialchars($tipo['nome_pagamento']) . "'>" . htmlspecialchars($tipo['nome_pagamento']) . "</option>";
+            // Carregar categorias dinamicamente do banco
+            $queryCategorias = "SELECT DISTINCT nome_categoria FROM categoriaDividaWHERE fk_usuario = $id ORDER BY nome_categoria ASC";
+            $resultCategorias = mysqli_query($conn, $queryCategorias);
+            while ($categoria = mysqli_fetch_assoc($resultCategorias)) {
+                $nomeCategoria = $categoria['nome_categoria'] ?? '-';
+                if ($nomeCategoria != '-') {
+                  echo "<option value='" . htmlspecialchars($nomeCategoria) . "'>" . htmlspecialchars($nomeCategoria) . "</option>";
+                }
             }
           ?>
         </select>
@@ -192,8 +197,22 @@ if(empty($_SESSION['ID_USER'])){
       </div>
 
       <div class="col-md-6">
-        <label for="filtroMes" class="form-label">Mês:</label>
-        <input type="month" id="filtroMes" class="form-control" />
+       <label for="filtroMes" class="form-label">Mês:</label>
+      <select id="filtroMes" class="form-select">
+        <option value="">--Todos--</option>
+        <option value="01">Janeiro</option>
+        <option value="02">Fevereiro</option>
+        <option value="03">Março</option>
+        <option value="04">Abril</option>
+        <option value="05">Maio</option>
+        <option value="06">Junho</option>
+        <option value="07">Julho</option>
+        <option value="08">Agosto</option>
+        <option value="09">Setembro</option>
+        <option value="10">Outubro</option>
+        <option value="11">Novembro</option>
+        <option value="12">Dezembro</option>
+      </select>
       </div>
 
       <div class="col-12 text-end">
@@ -203,6 +222,7 @@ if(empty($_SESSION['ID_USER'])){
     </form>
   </div>
 </div>
+<hr>
 
 <?php
 $selectDividas = "SELECT d.*, c.nome_categoria, tp.nome_pagamento
@@ -219,7 +239,7 @@ echo "
   <div class='form-section bg-white p-4 rounded shadow-sm'>
     <h3>Dívidas Cadastradas</h3>
     <div class='table-responsive'>
-<table id='tabelaDividas' class='table table-bordered align-middle'>
+    <table id='tabelaDividas' class='table table-bordered align-middle'>
         <thead class='table-light'>
           <tr>
             <th>Data Vencimento</th>
@@ -429,11 +449,11 @@ echo"
   </script>
   
   <script>
-document.getElementById("filtro").addEventListener("submit", function(e) {
+ document.getElementById("filtro").addEventListener("submit", function(e) {
   e.preventDefault();
 
   const filtroPessoa = document.getElementById("filtroPessoa").value.toLowerCase();
-  const filtroTipo = document.getElementById("filtroTipo").value.toLowerCase();
+  const filtroCategoria = document.getElementById("filtroCategoria").value.toLowerCase();
   const filtroValor = parseFloat(document.getElementById("filtroValor").value);
   const filtroMes = document.getElementById("filtroMes").value;
 
@@ -441,37 +461,33 @@ document.getElementById("filtro").addEventListener("submit", function(e) {
 
   linhas.forEach(linha => {
     const credor = linha.children[2].textContent.toLowerCase();
-    const tipo = linha.children[4].textContent.toLowerCase();
+    const categoria = linha.children[3].textContent.toLowerCase();
     const valorTexto = linha.children[6].textContent.replace("R$", "").trim().replace(".", "").replace(",", ".");
     const valor = parseFloat(valorTexto);
-    const data = linha.children[0].textContent.split("/"); // formato dd/mm/yyyy
-    const dataFormatada = `${data[2]}-${data[1]}`; // yyyy-mm
+    const mesLinha = linha.children[0].textContent.split("/")[1];
 
     let mostrar = true;
 
-    // Filtros de credor, tipo de pagamento, valor e mês
     if (filtroPessoa && !credor.includes(filtroPessoa)) mostrar = false;
-    if (filtroTipo && !tipo.includes(filtroTipo)) mostrar = false;
+    if (filtroCategoria && !categoria.includes(filtroCategoria)) mostrar = false;
     if (!isNaN(filtroValor) && valor < filtroValor) mostrar = false;
-    if (filtroMes && filtroMes !== dataFormatada) mostrar = false;
+    if (filtroMes && filtroMes !== mesLinha) mostrar = false;
 
     linha.style.display = mostrar ? "" : "none";
   });
 });
 
+
 document.getElementById("limparFiltros").addEventListener("click", function() {
-  // Limpar filtros
   document.getElementById("filtroPessoa").value = "";
-  document.getElementById("filtroTipo").value = "";
+  document.getElementById("filtroCategoria").value = "";
   document.getElementById("filtroValor").value = "";
   document.getElementById("filtroMes").value = "";
 
-  // Exibir todas as linhas da tabela
   const linhas = document.querySelectorAll("#tabelaDividas tbody tr");
-  linhas.forEach(linha => {
-    linha.style.display = "";
-  });
+  linhas.forEach(linha => linha.style.display = "");
 });
+
 </script>
 
 <!-- FOOTER -->

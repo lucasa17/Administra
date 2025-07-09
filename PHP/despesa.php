@@ -48,10 +48,7 @@ if(empty($_SESSION['ID_USER'])){
 
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ms-auto">
-        <li class="nav-item">
-          <a class="nav-link" href="dependente.php">Dependentes</a>
-        </li>
-        <li class="nav-item">
+       <li class="nav-item">
             <a class="nav-link" href="despesa.php">Despesas</a>
         </li>
         <li class="nav-item">
@@ -62,6 +59,9 @@ if(empty($_SESSION['ID_USER'])){
         </li>
         <li class="nav-item">
             <a class="nav-link" href="meta.php">Metas</a>
+      </li>
+        <li class="nav-item">
+          <a class="nav-link" href="dependente.php">Dependentes</a>
         </li>
         <li class="nav-item">
             <form action='sair.php' method='POST' style='display:inline;'>
@@ -173,11 +173,77 @@ if(empty($_SESSION['ID_USER'])){
 
         <button type='submit' class='btn btn-success mt-4'>Salvar Gasto</button>
       </form>
-    </div>
-  </div>
 ";
+?>
+
+<hr>
+
+<!-- Filtro de dívidas -->
+<div class="container mt-4">
+  <div class="form-section bg-white p-4 rounded shadow-sm">
+    <h3>Filtrar Despesa</h3>
+    <form id="filtro" class="row g-3">
+      <div class="col-md-6">
+        <label for="filtroDependente" class="form-label">Dependente:</label>
+        <select id="filtroDependente" class="form-select">
+          <option value="">--Todos--</option>
+          <?php
+          // Buscar dependentes do usuário para popular o select
+          $dependentes = mysqli_query($conn, "SELECT id_dependente, nome_dependente FROM dependente WHERE fk_usuario = $id ORDER BY nome_dependente ASC");
+          while ($dep = mysqli_fetch_assoc($dependentes)) {
+            echo "<option value='{$dep['id_dependente']}'>{$dep['nome_dependente']}</option>";
+          }
+          ?>
+        </select>
+      </div>
+
+      <div class="col-md-6">
+        <label for="filtroCategoria" class="form-label">Categoria:</label>
+        <select id="filtroCategoria" class="form-select">
+          <option value="">--Todas--</option>
+          <?php
+          // Buscar categorias do usuário para popular o select
+          $categorias = mysqli_query($conn, "SELECT id_categoria, nome_categoria FROM categoria WHERE fk_usuario = $id OR fk_usuario IS NULL ORDER BY nome_categoria ASC");
+          while ($cat = mysqli_fetch_assoc($categorias)) {
+            echo "<option value='{$cat['id_categoria']}'>{$cat['nome_categoria']}</option>";
+          }
+          ?>
+        </select>
+      </div>
+      <div class="col-md-6">
+        <label for="filtroValor" class="form-label">Valor Mínimo (R$):</label>
+        <input type="number" id="filtroValor" class="form-control" min="0" step="0.01" />
+      </div>
+      <div class="col-md-6">
+       <label for="filtroMes" class="form-label">Mês:</label>
+      <select id="filtroMes" class="form-select">
+        <option value="">--Todos--</option>
+        <option value="01">Janeiro</option>
+        <option value="02">Fevereiro</option>
+        <option value="03">Março</option>
+        <option value="04">Abril</option>
+        <option value="05">Maio</option>
+        <option value="06">Junho</option>
+        <option value="07">Julho</option>
+        <option value="08">Agosto</option>
+        <option value="09">Setembro</option>
+        <option value="10">Outubro</option>
+        <option value="11">Novembro</option>
+        <option value="12">Dezembro</option>
+      </select>
+      </div>
+
+      <div class="col-12 text-end">
+        <button type="submit" class="btn btn-primary mt-3">Buscar</button>
+        <button type="button" id="limparFiltros" class="btn btn-secondary mt-3 ms-2">Limpar</button>
+      </div>
+    </form>
+  </div>
+</div>
+<hr>
 
 
+<?php
 $selectDespesas = "SELECT d.*, dep.nome_dependente, cat.nome_categoria, tp.nome_pagamento
                    FROM despesa d
                    LEFT JOIN dependente dep ON d.fk_dependente = dep.id_dependente
@@ -193,7 +259,7 @@ echo "
   <div class='form-section bg-white p-4 rounded shadow-sm'>
     <h3>Despesas Cadastradas</h3>
     <div class='table-responsive'>
-      <table class='table table-bordered align-middle'>
+      <table id='tabelaDespesas' class='table table-bordered align-middle'>
         <thead class='table-light'>
           <tr>
             <th>Data</th>
@@ -266,6 +332,11 @@ echo "
       Total de Despesas: R$ $valorTotalFormatado 
     </div>
   </div>
+</div>
+</div>
+</div>
+</div>
+</div>
 </div>
 ";
 ?>
@@ -420,9 +491,71 @@ if (confirmar) {
   linha.remove();
 }
 }
-
-
 </script>
+
+  <script>
+document.getElementById("filtro").addEventListener("submit", function(e) {
+  e.preventDefault();
+
+  // Valores dos filtros
+  const filtroValor = parseFloat(document.getElementById("filtroValor").value);
+  const filtroMes = document.getElementById("filtroMes").value;
+  const filtroDependente = document.getElementById("filtroDependente").value;
+  const filtroCategoria = document.getElementById("filtroCategoria").value;
+
+  // Todas as linhas da tabela
+  const linhas = document.querySelectorAll("#tabelaDespesas tbody tr");
+
+  linhas.forEach(linha => {
+    // Valor na coluna 5 (índice 5)
+    const valorTexto = linha.children[5].textContent.replace("R$", "").trim().replace(/\./g, "").replace(",", ".");
+    const valor = parseFloat(valorTexto);
+
+    // Data na coluna 0 para pegar mês
+    const data = linha.children[0].textContent.split("/");
+    const mesLinha = data[1];
+
+    // Dependente na coluna 2 e categoria na coluna 3
+    const dependenteLinha = linha.children[2].textContent.trim();
+    const categoriaLinha = linha.children[3].textContent.trim();
+
+    let mostrar = true;
+
+    if (!isNaN(filtroValor) && valor < filtroValor) mostrar = false;
+    if (filtroMes && filtroMes !== mesLinha) mostrar = false;
+
+    // Se filtroDependente não vazio, verifica se bate com o texto da célula
+    if (filtroDependente && filtroDependente !== "") {
+      // Aqui vamos comparar pelo texto da célula, para isso precisamos do nome do dependente selecionado.
+      const selectDep = document.getElementById("filtroDependente");
+      const nomeFiltroDep = selectDep.options[selectDep.selectedIndex].text;
+      if (dependenteLinha !== nomeFiltroDep) mostrar = false;
+    }
+
+    // Mesmo para categoria
+    if (filtroCategoria && filtroCategoria !== "") {
+      const selectCat = document.getElementById("filtroCategoria");
+      const nomeFiltroCat = selectCat.options[selectCat.selectedIndex].text;
+      if (categoriaLinha !== nomeFiltroCat) mostrar = false;
+    }
+
+    linha.style.display = mostrar ? "" : "none";
+  });
+});
+
+document.getElementById("limparFiltros").addEventListener("click", function() {
+  document.getElementById("filtroValor").value = "";
+  document.getElementById("filtroMes").value = "";
+  document.getElementById("filtroDependente").value = "";
+  document.getElementById("filtroCategoria").value = "";
+
+  const linhas = document.querySelectorAll("#tabelaDespesas tbody tr");
+  linhas.forEach(linha => {
+    linha.style.display = "";
+  });
+});
+</script>
+
 
 <!-- FOOTER -->
 <footer class="mt-4">
