@@ -60,6 +60,7 @@ CREATE TABLE Renda (
 	id_renda INT AUTO_INCREMENT PRIMARY KEY,
 	valor_renda DECIMAL(10,2),
 	data_renda DATE NOT NULL,
+	fixo BOOLEAN DEFAULT FALSE,
 	fk_usuario INT NOT NULL,
 	fk_fonte INT NOT NULL,
 	FOREIGN KEY (fk_usuario) REFERENCES Usuario(id_usuario)  ON DELETE CASCADE ON UPDATE CASCADE,
@@ -90,6 +91,7 @@ CREATE TABLE Despesa (
 	nome_despesa VARCHAR(50),
 	valor_despesa DECIMAL(10,2),
 	data_despesa DATE NOT NULL,
+	 fixo BOOLEAN DEFAULT FALSE,
 	fk_dependente int,
 	fk_usuario INT NOT NULL,
 	fk_categoria INT NOT NULL,
@@ -107,6 +109,18 @@ CREATE TABLE ResumoMensal (
   total_receita DECIMAL(10,2),
   total_despesa DECIMAL(10,2),
   saldo DECIMAL(10,2),
+saldo_meta DECIMAL(10,2),
   fk_usuario INT,
   UNIQUE (ano, mes, fk_usuario)
+);
+-- Tabela de Relatório anual
+CREATE TABLE RelatorioAnual (
+    id_relatorio INT AUTO_INCREMENT PRIMARY KEY,
+    ano INT NOT NULL,
+    total_receita DECIMAL(12,2),
+    total_despesa DECIMAL(12,2),
+    saldo_anual DECIMAL(12,2),
+    fk_usuario INT NOT NULL,
+    UNIQUE (ano, fk_usuario),
+    FOREIGN KEY (fk_usuario) REFERENCES Usuario(id_usuario) ON DELETE CASCADE ON UPDATE CASCADE
 );
