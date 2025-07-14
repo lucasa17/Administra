@@ -100,7 +100,7 @@ footer {
 }
 
 .form-section {
-  max-height: 550px;
+  max-height: 1000px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
