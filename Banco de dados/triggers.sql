@@ -3,7 +3,7 @@ DELIMITER //
 CREATE TRIGGER tr_seta_data_vencimento 
 BEFORE INSERT ON Divida 
 FOR EACH ROW
-BEGIN  	
+BEGIN 
 	IF (NEW.data_vencimento IS NULL) THEN
 		SET NEW.data_vencimento = DATE_ADD(NEW.data_primeira_parcela, INTERVAL (NEW.parcelas - 1) MONTH );
 	END IF;
@@ -168,6 +168,106 @@ DELIMITER ;
 DELIMITER //
 CREATE TRIGGER tr_calcula_detalhes_divida
 BEFORE INSERT ON Divida
+FOR EACH ROW
+BEGIN
+    IF NEW.parcelas > 0 THEN
+        SET NEW.valor_parcela = NEW.valor_divida / NEW.parcelas;
+        SET NEW.mes_inicio = MONTH(NEW.data_primeira_parcela);
+        SET NEW.mes_final = MONTH(DATE_ADD(NEW.data_primeira_parcela, INTERVAL (NEW.parcelas - 1) MONTH));
+    END IF;
+END //
+DELIMITER ;
+-- Atualiza resumo mensal
+DELIMITER //
+CREATE TRIGGER tr_atualiza_resumo_renda_update
+AFTER UPDATE ON Renda
+FOR EACH ROW
+BEGIN
+  DECLARE v_id INT;
+
+  SELECT id_resumo INTO v_id
+  FROM ResumoMensal
+  WHERE mes = MONTH(NEW.data_renda)
+    AND ano = YEAR(NEW.data_renda)
+    AND fk_usuario = NEW.fk_usuario
+  LIMIT 1;
+
+  IF (v_id IS NOT NULL) THEN
+    UPDATE ResumoMensal
+    SET total_receita = total_receita - OLD.valor_renda + NEW.valor_renda,
+        saldo = saldo - OLD.valor_renda + NEW.valor_renda
+    WHERE id_resumo = v_id;
+  END IF;
+END //
+DELIMITER ;
+-- Atualiza resumo mensal da despesa
+DELIMITER //
+CREATE TRIGGER tr_atualiza_resumo_despesa_update
+AFTER UPDATE ON Despesa
+FOR EACH ROW
+BEGIN
+  DECLARE v_id INT;
+
+  SELECT id_resumo INTO v_id
+  FROM ResumoMensal
+  WHERE mes = MONTH(NEW.data_despesa)
+    AND ano = YEAR(NEW.data_despesa)
+    AND fk_usuario = NEW.fk_usuario
+  LIMIT 1;
+
+  IF (v_id IS NOT NULL) THEN
+    UPDATE ResumoMensal
+    SET total_despesa = total_despesa - OLD.valor_despesa + NEW.valor_despesa,
+        saldo = saldo + OLD.valor_despesa - NEW.valor_despesa
+    WHERE id_resumo = v_id;
+  END IF;
+END //
+DELIMITER ;
+-- atualiza resumo mensal da divida
+DELIMITER //
+CREATE TRIGGER tr_atualiza_resumo_divida_update
+AFTER UPDATE ON Divida
+FOR EACH ROW
+BEGIN
+  DECLARE v_id INT;
+  DECLARE v_mes INT;
+  DECLARE v_ano INT;
+
+  SET v_mes = MONTH(NEW.data_primeira_parcela);
+  SET v_ano = YEAR(NEW.data_primeira_parcela);
+
+  SELECT id_resumo INTO v_id
+  FROM ResumoMensal
+  WHERE mes = v_mes
+    AND ano = v_ano
+    AND fk_usuario = NEW.fk_usuario
+  LIMIT 1;
+
+  IF (v_id IS NOT NULL) THEN
+    UPDATE ResumoMensal
+    SET total_despesa = total_despesa - OLD.valor_parcela + NEW.valor_parcela,
+        saldo = saldo + OLD.valor_parcela - NEW.valor_parcela
+    WHERE id_resumo = v_id;
+  END IF;
+END //
+DELIMITER ;
+-- Detalha Divida
+DELIMITER //
+CREATE TRIGGER tr_calcula_detalhes_divida
+BEFORE INSERT ON Divida
+FOR EACH ROW
+BEGIN
+    IF NEW.parcelas > 0 THEN
+        SET NEW.valor_parcela = NEW.valor_divida / NEW.parcelas;
+        SET NEW.mes_inicio = MONTH(NEW.data_primeira_parcela);
+        SET NEW.mes_final = MONTH(DATE_ADD(NEW.data_primeira_parcela, INTERVAL (NEW.parcelas - 1) MONTH));
+    END IF;
+END //
+DELIMITER ;
+-- Para quando atualizar
+DELIMITER //
+CREATE TRIGGER tr_calcula_detalhes_divida_update
+BEFORE UPDATE ON Divida
 FOR EACH ROW
 BEGIN
     IF NEW.parcelas > 0 THEN
