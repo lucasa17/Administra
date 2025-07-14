@@ -15,13 +15,19 @@ CREATE TABLE TipoPagamento(
 	FOREIGN KEY (fk_usuario) REFERENCES Usuario(id_usuario)  ON DELETE CASCADE ON UPDATE CASCADE
 
 );
+
+insert into TipoPagamento (nome_pagamento) values ('Pix'),('Dinheiro'),('Cartão Débito'),('Cartão Crédito'),('Cheque');
+
 -- Como o usuário ganhou seu dinheiro
 CREATE TABLE FonteRenda(
 	id_renda INT AUTO_INCREMENT PRIMARY KEY,
 	fonte_da_renda VARCHAR(100) NOT NULL,
-	fk_usuario INT NOT NULL,
+	fk_usuario INT,
 	FOREIGN KEY (fk_usuario) REFERENCES Usuario(id_usuario)  ON DELETE CASCADE ON UPDATE CASCADE
 );
+
+insert into FonteRenda (fonte_da_renda) values ('Salário');
+
 -- Categorias das despesas e divídas
 CREATE TABLE Categoria(
 	id_categoria INT AUTO_INCREMENT PRIMARY KEY,
@@ -29,6 +35,9 @@ CREATE TABLE Categoria(
 	fk_usuario INT,
 	FOREIGN KEY (fk_usuario) REFERENCES Usuario(id_usuario)  ON DELETE CASCADE ON UPDATE CASCADE
 );
+
+insert into categoria (nome_categoria) values ('Alimentação'), ('Transporte'), ('Lazer');
+
 -- Tabela de divida e categoria
 CREATE TABLE CategoriaDivida(
 	id_categoria INT AUTO_INCREMENT PRIMARY KEY,
@@ -36,6 +45,9 @@ CREATE TABLE CategoriaDivida(
 	fk_usuario INT,
 	FOREIGN KEY (fk_usuario) REFERENCES Usuario(id_usuario)  ON DELETE CASCADE ON UPDATE CASCADE
 );
+
+insert into CategoriaDivida (nome_categoria) values ('Empréstimo'), ('Consórcio'), ('Financiamento');
+
 -- Dívidas que o usuário tem que pagar
 CREATE TABLE Divida (
 	id_divida INT AUTO_INCREMENT PRIMARY KEY,
@@ -52,8 +64,8 @@ CREATE TABLE Divida (
 	fk_categoria INT NOT NULL,
 	fk_tipo_pagamento INT NOT NULL,
 	FOREIGN KEY (fk_usuario) REFERENCES Usuario(id_usuario)  ON DELETE CASCADE ON UPDATE CASCADE,
-	FOREIGN KEY (fk_tipo_pagamento) REFERENCES TipoPagamento(id_pagamento) ON DELETE CASCADE ON UPDATE CASCADE
-	-- FOREIGN KEY (fk_categoria) REFERENCES CategoriaDivida(id_categoria) ON DELETE CASCADE ON UPDATE CASCADE
+	FOREIGN KEY (fk_tipo_pagamento) REFERENCES TipoPagamento(id_pagamento) ON DELETE CASCADE ON UPDATE CASCADE,
+	FOREIGN KEY (fk_categoria) REFERENCES CategoriaDivida(id_categoria) ON DELETE CASCADE ON UPDATE CASCADE
 );
 -- Como o usuário ganha o seu dinheiro
 CREATE TABLE Renda (
@@ -91,7 +103,7 @@ CREATE TABLE Despesa (
 	nome_despesa VARCHAR(50),
 	valor_despesa DECIMAL(10,2),
 	data_despesa DATE NOT NULL,
-	 fixo BOOLEAN DEFAULT FALSE,
+	fixo BOOLEAN DEFAULT FALSE,
 	fk_dependente int,
 	fk_usuario INT NOT NULL,
 	fk_categoria INT NOT NULL,
@@ -109,9 +121,9 @@ CREATE TABLE ResumoMensal (
   total_receita DECIMAL(10,2),
   total_despesa DECIMAL(10,2),
   saldo DECIMAL(10,2),
-saldo_meta DECIMAL(10,2),
+  saldo_meta DECIMAL(10,2),
   fk_usuario INT,
-  UNIQUE (ano, mes, fk_usuario)
+  UNIQUE (mes)
 );
 -- Tabela de Relatório anual
 CREATE TABLE RelatorioAnual (
@@ -121,6 +133,7 @@ CREATE TABLE RelatorioAnual (
     total_despesa DECIMAL(12,2),
     saldo_anual DECIMAL(12,2),
     fk_usuario INT NOT NULL,
-    UNIQUE (ano, fk_usuario),
+    UNIQUE (ano),
     FOREIGN KEY (fk_usuario) REFERENCES Usuario(id_usuario) ON DELETE CASCADE ON UPDATE CASCADE
 );
+
