@@ -1,6 +1,7 @@
 <?php
 session_start();
 include 'conexao.php';
+  mysqli_set_charset($conn, 'utf8');
 
 if(empty($_SESSION['ID_USER'])){
 
@@ -8,7 +9,7 @@ if(empty($_SESSION['ID_USER'])){
       <div id='loadingOverlay'>
           <div id='loadingCard'>
           <h1>Administra</h1>
-          <img src='https://cdn.dribbble.com/users/2469324/screenshots/6538803/comp_3.gif' alt='Carregando...' />
+          <img src='../IMAGENS/alerta.gif' alt='Carregando...' />
           <strong><p class='mt-3'>Usuário não esta logado</p></strong>
           </div>
       </div>
@@ -22,7 +23,7 @@ if(empty($_SESSION['ID_USER'])){
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Administra</title>
+  <title>Administra - Dívida</title>
 
   <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
@@ -48,6 +49,9 @@ if(empty($_SESSION['ID_USER'])){
 
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+            <a class="nav-link" href="visaoGeral.php">Visão Geral</a>
+        </li>
        <li class="nav-item">
             <a class="nav-link" href="despesa.php">Despesas</a>
         </li>
@@ -148,6 +152,8 @@ if(empty($_SESSION['ID_USER'])){
 
                 <button type='submit' class='btn btn-success mt-4'>Salvar Dívida</button>
             </form>
+          </div>
+
 ";
 ?>
 
@@ -312,13 +318,12 @@ $valorTotalFormatado = number_format($totalDividas, 2, ',', '.');
 echo " </tbody>
       </table>
     </div>
-  </div>
-</div>
 
 <div class='container mt-3'>
   <div class='alert alert-info text-end fw-bold'>
       Total de Dívidas: R$ $valorTotalFormatado 
   </div>
+</div>
 </div>
 ";
 echo"

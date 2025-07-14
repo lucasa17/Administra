@@ -59,7 +59,7 @@ include 'conexao.php';
             </div>
         </div>
         ";
-        header("refresh: 2; url=despesa.php");
+        header("refresh: 2; url=visaoGeral.php");
 	} 
     else {
 

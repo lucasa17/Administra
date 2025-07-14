@@ -1,6 +1,7 @@
 <?php
 session_start();
 include 'conexao.php';
+  mysqli_set_charset($conn, 'utf8');
 
 if(empty($_SESSION['ID_USER'])){
 
@@ -8,14 +9,14 @@ if(empty($_SESSION['ID_USER'])){
       <div id='loadingOverlay'>
           <div id='loadingCard'>
           <h1>Administra</h1>
-          <img src='https://cdn.dribbble.com/users/2469324/screenshots/6538803/comp_3.gif' alt='Carregando...' />
+          <img src='../IMAGENS/alerta.gif' alt='Carregando...' />
           <strong><p class='mt-3'>Usuário não esta logado</p></strong>
           </div>
       </div>
       ";        
   header("refresh: 3.5; url=../index.html");
 }
-  
+
 ?>
 
 <!DOCTYPE html>
@@ -23,7 +24,7 @@ if(empty($_SESSION['ID_USER'])){
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Administra</title>
+  <title>Administra - Despesa</title>
 
   <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
@@ -48,6 +49,9 @@ if(empty($_SESSION['ID_USER'])){
 
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+            <a class="nav-link" href="visaoGeral.php">Visão Geral</a>
+        </li>
        <li class="nav-item">
             <a class="nav-link" href="despesa.php">Despesas</a>
         </li>
@@ -70,13 +74,11 @@ if(empty($_SESSION['ID_USER'])){
         </li>
       </ul>
     </div>
-  </div>
 </nav>
 
 <?php
- 
-	$id = $_SESSION['ID_USER'];
 
+	$id = $_SESSION['ID_USER'];
   echo"
     <div class='container mt-4'>
     <div class='form-section bg-white p-4 rounded shadow-sm'>
@@ -90,6 +92,7 @@ if(empty($_SESSION['ID_USER'])){
     <select name='txtdependente' id='dependente' class='form-select'>
       <option value=''>Nenhum</option>
   ";
+
 	  $dependentes = "SELECT * from dependente where fk_usuario = $id order by nome_dependente asc";
     $queryDependente = mysqli_query($conn, $dependentes);
 
@@ -164,19 +167,21 @@ if(empty($_SESSION['ID_USER'])){
         </div>
     ";
 
-    echo"
-        <label for='valor' class='mt-3'>Valor total (R$):</label>
-        <input type='number' name='numValor' id='valor' class='form-control' min='0' step='0.01' required />
+echo "
+  <label for='valor' class='mt-3'>Valor total (R$):</label>
+  <input type='number' name='numValor' id='valor' class='form-control' min='0' step='0.01' required />
 
-        <label for='data' class='mt-3'>Data inicial do gasto:</label>
-        <input type='date' name='txtData' id='data' class='form-control'/>
+  <label for='data' class='mt-3'>Data inicial do gasto:</label>
+  <input type='date' name='txtData' id='data' class='form-control' required />
 
-        <button type='submit' class='btn btn-success mt-4'>Salvar Gasto</button>
-      </form>
+  <button type='submit' class='btn btn-success mt-4'>Salvar Gasto</button>
+</form>
+</div>
 ";
-?>
 
-<hr>
+?>
+    </div>
+
 
 <!-- Filtro de dívidas -->
 <div class="container mt-4">
@@ -201,13 +206,18 @@ if(empty($_SESSION['ID_USER'])){
         <label for="filtroCategoria" class="form-label">Categoria:</label>
         <select id="filtroCategoria" class="form-select">
           <option value="">--Todas--</option>
+
           <?php
           // Buscar categorias do usuário para popular o select
-          $categorias = mysqli_query($conn, "SELECT id_categoria, nome_categoria FROM categoria WHERE fk_usuario = $id OR fk_usuario IS NULL ORDER BY nome_categoria ASC");
+
+          $categoriaSel = "SELECT id_categoria, nome_categoria FROM categoria WHERE fk_usuario = $id OR fk_usuario IS NULL ORDER BY nome_categoria ASC";
+
+          $categorias = mysqli_query($conn,$categoriaSel);
           while ($cat = mysqli_fetch_assoc($categorias)) {
             echo "<option value='{$cat['id_categoria']}'>{$cat['nome_categoria']}</option>";
           }
           ?>
+
         </select>
       </div>
       <div class="col-md-6">
@@ -240,13 +250,11 @@ if(empty($_SESSION['ID_USER'])){
     </form>
   </div>
 </div>
-<hr>
 
 
 <?php
-$selectDespesas = "SELECT d.*, dep.nome_dependente, cat.nome_categoria, tp.nome_pagamento
+$selectDespesas = "SELECT d.*, cat.nome_categoria, tp.nome_pagamento
                    FROM despesa d
-                   LEFT JOIN dependente dep ON d.fk_dependente = dep.id_dependente
                    LEFT JOIN categoria cat ON d.fk_categoria = cat.id_categoria
                    LEFT JOIN tipopagamento tp ON d.fk_tipo_pagamento = tp.id_pagamento
                    WHERE d.fk_usuario = $id
@@ -354,6 +362,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 });
+</script>
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {

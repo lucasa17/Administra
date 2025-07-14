@@ -1,6 +1,8 @@
 <?php
 session_start();
 include 'conexao.php';
+mysqli_set_charset($conn, 'utf8');
+
 
 if(empty($_SESSION['ID_USER'])){
 
@@ -8,7 +10,7 @@ if(empty($_SESSION['ID_USER'])){
       <div id='loadingOverlay'>
           <div id='loadingCard'>
           <h1>Administra</h1>
-          <img src='https://cdn.dribbble.com/users/2469324/screenshots/6538803/comp_3.gif' alt='Carregando...' />
+          <img src='../IMAGENS/alerta.gif' alt='Carregando...' />
           <strong><p class='mt-3'>Usuário não esta logado</p></strong>
           </div>
       </div>
@@ -22,7 +24,7 @@ if(empty($_SESSION['ID_USER'])){
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Administra</title>
+  <title>Administra - Renda</title>
 
   <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
@@ -48,6 +50,9 @@ if(empty($_SESSION['ID_USER'])){
 
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="visaoGeral.php">Visão Geral</a>
+        </li>
               <li class="nav-item">
             <a class="nav-link" href="despesa.php">Despesas</a>
         </li>
@@ -94,9 +99,8 @@ if(empty($_SESSION['ID_USER'])){
     $nomeRenda = $pegaRenda['fonte_da_renda'];
     $idRenda = $pegaRenda['id_renda'];
 
-    echo "<option value='$idRenda'>$nomeRenda</option>";
+    echo "<option value='$idRenda'>" . htmlspecialchars($nomeRenda, ENT_QUOTES, 'UTF-8') . "</option>";
   }
-
   echo "
     <option value='Outro'>Outro...</option>
     </select>
@@ -118,7 +122,7 @@ if(empty($_SESSION['ID_USER'])){
   </div>
   ";
 
-  $queryFonte = mysqli_query($conn, "SELECT * FROM FonteRenda WHERE fk_usuario = $id OR fk_usuario IS NULL ORDER BY fonte_da_renda ASC");
+  $queryFonte = mysqli_query($conn, "SELECT * FROM FonteRenda WHERE fk_usuario = $id ORDER BY fonte_da_renda ASC");
 
   echo "
   <div class='container mt-4'>
@@ -144,7 +148,7 @@ echo "
     <td class='text-center'>$nomeRenda</td>
     <td class='text-center'>
       <form action='excluiFonteRenda.php' method='POST' style='display:inline;'>
-        <input type='hidden' name='idRenda' value='$idFonte'>
+        <input type='hidden' name='idFonte' value='$idFonte'>
         <button type='submit' class='btn btn-danger btn-sm'>Excluir</button>
       </form>
     </td>

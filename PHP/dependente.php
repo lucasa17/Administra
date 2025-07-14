@@ -8,7 +8,7 @@ include 'conexao.php';
         <div id='loadingOverlay'>
             <div id='loadingCard'>
             <h1>Administra</h1>
-            <img src='https://cdn.dribbble.com/users/2469324/screenshots/6538803/comp_3.gif' alt='Carregando...' />
+            <img src='../IMAGENS/alerta.gif' alt='Carregando...' />
             <strong><p class='mt-3'>Usuário não esta logado</p></strong>
             </div>
         </div>
@@ -23,7 +23,7 @@ include 'conexao.php';
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Administra</title>
+  <title>Administra - Dependente</title>
 
   <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
@@ -47,6 +47,9 @@ include 'conexao.php';
 
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+            <a class="nav-link" href="visaoGeral.php">Visão Geral</a>
+        </li>
         <li class="nav-item">
             <a class="nav-link" href="despesa.php">Despesas</a>
         </li>
