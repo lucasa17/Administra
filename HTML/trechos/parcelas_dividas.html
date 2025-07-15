@@ -1,0 +1,247 @@
+<hr> <!-- Container Dívidas Cadastradas -->
+
+<div class="container mt-4">
+    <div class="form-section bg-white p-4 rounded shadow-sm">
+      <h3>Dívidas Cadastradas</h3>
+      <div class="table-responsive">
+        <table id="tabelaDividas" class="table table-bordered align-middle">
+          <thead class="table-light">
+            <tr>
+              <th>Data Vencimento</th><th>Nome</th><th>Credor</th><th>Categoria</th><th>Tipo Pagto</th>
+              <th>Parcelas</th><th>Valor Total</th><th>Exibir</th><th>Editar</th><th>Excluir</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="alert alert-info text-end fw-bold" id="totalDividas">Total de Dívidas: R$ 0,00</div>
+    </div>
+  </div>
+  
+  <!-- Modal Parcelas -->
+  <div class="modal fade" id="modalParcelas" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Parcelas da Dívida</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Valor (R$)</th>
+                <th>Mês de Vencimento</th>
+              </tr>
+            </thead>
+            <tbody id="tabelaParcelas"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Modal Edição -->
+  <div class="modal fade" id="modalEditar" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form id="formEditar">
+          <div class="modal-header">
+            <h5 class="modal-title">Editar Dívida</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <input type="hidden" name="id">
+            <label>Nome:</label><input type="text" name="nome" class="form-control" required>
+            <label class="mt-3">Credor:</label><input type="text" name="credor" class="form-control" required>
+            <label class="mt-3">Categoria:</label><select name="categoria" id="editCategoria" class="form-select"></select>
+            <label class="mt-3">Tipo Pagamento:</label><select name="tipoPagamento" id="editTipo" class="form-select"></select>
+            <label class="mt-3">Parcelas:</label><input type="number" name="parcelas" class="form-control" min="1" required>
+            <label class="mt-3">Valor:</label><input type="number" name="valor" class="form-control" step="0.01" required>
+            <label class="mt-3">Data:</label><input type="date" name="data" class="form-control" required>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn btn-success">Salvar Alterações</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>  
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+// Placeholders para dados e simulação:
+let usuarioLogado = { id: 1, nome: "João" };
+let categorias = ["Casa", "Cartão", "Auto"];
+let tiposDePagamento = ["Boleto", "Cartão de Crédito"];
+let dividas = [];
+
+// Funções para atualizar selects e tabelas:
+function populaSelects() {
+  const selCat = document.getElementById("categoria"),
+        selTip = document.getElementById("tipoPagamento"),
+        filtroCat = document.getElementById("filtroCategoria"),
+        filtroPessoa = document.getElementById("filtroPessoa"),
+        editCat = document.getElementById("editCategoria"),
+        editTip = document.getElementById("editTipo");
+
+  [selCat, filtroCat, editCat].forEach(sel => {
+    sel.innerHTML = `<option value="">--Selecione--</option>` + categorias.map(c => `<option>${c}</option>`).join('');
+    sel.insertAdjacentHTML('beforeend', `<option>Outra...</option>`);
+  });
+  [selTip, editTip].forEach(sel => {
+    sel.innerHTML = `<option value="">--Selecione--</option>` + tiposDePagamento.map(t => `<option>${t}</option>`).join('');
+    sel.insertAdjacentHTML('beforeend', `<option>Outro...</option>`);
+  });
+  filtroPessoa.innerHTML = `<option value="">--Todos--</option>` + [...new Set(dividas.map(d => d.credor))].map(c=>`<option>${c}</option>`).join('');
+}
+
+function atualizaTabela() {
+  const corpo = document.querySelector("#tabelaDividas tbody");
+  corpo.innerHTML = "";
+  let total = 0;
+  dividas.forEach((d, i) => {
+    const valor = parseFloat(d.valor);
+    total += valor;
+    corpo.insertAdjacentHTML('beforeend', `
+      <tr data-index="${i}">
+        <td>${new Date(d.data).toLocaleDateString()}</td>
+        <td>${d.nome}</td><td>${d.credor}</td><td>${d.categoria}</td>
+        <td>${d.tipoPagamento}</td><td>${d.parcelas}</td><td>R$ ${valor.toFixed(2)}</td>
+        <td><button class="btn btn-warning btn-sm editBtn">Editar</button></td>
+        <td><button class="btn btn-danger btn-sm delBtn">Excluir</button></td>
+      </tr>
+    `);
+  });
+  document.getElementById("totalDividas").textContent = `Total de Dívidas: R$ ${total.toFixed(2)}`;
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  if (!usuarioLogado) {
+    document.getElementById("user-alert").style.display = "block";
+    return;
+  }
+  populaSelects();
+  atualizaTabela();
+
+  document.getElementById("logoutBtn").onclick = () => {
+    alert("Implementar logout via API");
+  };
+
+  document.getElementById("categoria").onchange = () => {
+    document.getElementById("novaCategoriaWrapper").style.display = document.querySelector("#categoria").value === "Outra..." ? "block" : "none";
+  };
+  document.getElementById("tipoPagamento").onchange = () => {
+    document.getElementById("novoTipoWrapper").style.display = document.querySelector("#tipoPagamento").value === "Outro..." ? "block" : "none";
+  };
+
+  document.getElementById("formDivida").onsubmit = e => {
+    e.preventDefault();
+    const f = e.target;
+    const novaCat = f.categoria.value === "Outra..." ? f.novaCategoria.value.trim() : null;
+    const novoTip = f.tipoPagamento.value === "Outro..." ? f.novoTipoPagamento.value.trim() : null;
+    if (novaCat) { categorias.push(novaCat); }
+    if (novoTip) { tiposDePagamento.push(novoTip); }
+    dividas.push({
+      nome: f.nome.value, credor: f.credor.value,
+      categoria: novaCat || f.categoria.value,
+      tipoPagamento: novoTip || f.tipoPagamento.value,
+      parcelas: f.parcelas.value, valor: f.valor.value, data: f.data.value
+    });
+    populaSelects(); atualizaTabela(); f.reset();
+  };
+
+  document.getElementById("tabelaDividas").onclick = e => {
+    const tr = e.target.closest("tr");
+    if (!tr) return;
+    const idx = +tr.dataset.index;
+    if (e.target.classList.contains("delBtn")) {
+      if (confirm("Deseja excluir?")) { dividas.splice(idx,1); atualizaTabela(); }
+    }
+    if (e.target.classList.contains("editBtn")) {
+      const d = dividas[idx];
+      const form = document.getElementById("formEditar");
+      form.id.value = idx;
+      ['nome','credor','parcelas','valor','data','categoria','tipoPagamento'].forEach(n => form[n].value = d[n]);
+      new bootstrap.Modal(document.getElementById("modalEditar")).show();
+    }
+  };
+
+  document.getElementById("formEditar").onsubmit = e => {
+    e.preventDefault();
+    const f = e.target;
+    const idx = +f.id.value;
+    dividas[idx] = {
+      nome: f.nome.value, credor: f.credor.value,
+      categoria: f.categoria.value, tipoPagamento: f.tipoPagamento.value,
+      parcelas: f.parcelas.value, valor: f.valor.value, data: f.data.value
+    };
+    atualizaTabela();
+    bootstrap.Modal.getInstance(document.getElementById("modalEditar")).hide();
+  };
+
+  document.getElementById("filtro").onsubmit = e => {
+    e.preventDefault();
+    const vPessoa = document.getElementById("filtroPessoa").value.toLowerCase();
+    const vCat = document.getElementById("filtroCategoria").value.toLowerCase();
+    const vValor = parseFloat(document.getElementById("filtroValor").value);
+    const vMes = document.getElementById("filtroMes").value;
+    document.querySelectorAll("#tabelaDividas tbody tr").forEach(tr => {
+      const d = dividas[tr.dataset.index];
+      const dt = new Date(d.data);
+      const mes = String(dt.getMonth()+1).padStart(2,'0');
+      const cond = (!vPessoa || d.credor.toLowerCase().includes(vPessoa))
+                 && (!vCat || d.categoria.toLowerCase().includes(vCat))
+                 && (isNaN(vValor) || parseFloat(d.valor)>=vValor)
+                 && (!vMes || mes===vMes);
+      tr.style.display = cond? "" : "none";
+    });
+  };
+
+  document.getElementById("limparFiltros").onclick = () => {
+    ["filtroPessoa","filtroCategoria","filtroValor","filtroMes"].forEach(id=>document.getElementById(id).value = "");
+    document.querySelectorAll("#tabelaDividas tbody tr").forEach(tr => tr.style.display = "");
+  };
+});
+
+// Simulação de parcelas
+document.addEventListener("click", function(e) {
+    if (e.target.classList.contains("exibirBtn")) {
+      const linha = e.target.closest("tr");
+      const valorTotal = parseFloat(linha.children[6].textContent.replace("R$", "").replace(".", "").replace(",", "."));
+      const parcelas = parseInt(linha.children[5].textContent);
+      const data = linha.children[0].textContent.split("/"); // DD/MM/YYYY
+      const dataBase = new Date(`${data[2]}-${data[1]}-${data[0]}`);
+
+      const corpo = document.getElementById("tabelaParcelas");
+      corpo.innerHTML = "";
+
+      for (let i = 1; i <= parcelas; i++) {
+        const dataParcela = new Date(dataBase);
+        dataParcela.setMonth(dataParcela.getMonth() + (i - 1));
+
+        const linhaParcela = `
+          <tr>
+            <td>${i}</td>
+            <td>R$ ${(valorTotal / parcelas).toFixed(2).replace(".", ",")}</td>
+            <td>${("0" + (dataParcela.getMonth() + 1)).slice(-2)}/${dataParcela.getFullYear()}</td>
+          </tr>
+        `;
+        corpo.innerHTML += linhaParcela;
+      }
+
+      const modal = new bootstrap.Modal(document.getElementById("modalParcelas"));
+      modal.show();
+    }
+  });
+
+</script>
+
+<footer class="mt-4 text-center"><div class="container"><p>© 2025 Administra</p></div></footer>
+
+</body>
+</html>
