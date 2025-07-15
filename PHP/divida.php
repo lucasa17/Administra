@@ -157,8 +157,6 @@ if(empty($_SESSION['ID_USER'])){
 ";
 ?>
 
-<hr>
-
 <!-- Filtro de dívidas -->
 <div class="container mt-4">
   <div class="form-section bg-white p-4 rounded shadow-sm">
@@ -228,7 +226,6 @@ if(empty($_SESSION['ID_USER'])){
     </form>
   </div>
 </div>
-<hr>
 
 <?php
 $selectDividas = "SELECT d.*, c.nome_categoria, tp.nome_pagamento
