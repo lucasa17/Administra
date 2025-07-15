@@ -95,13 +95,21 @@
       $dados = mysqli_fetch_assoc($res);
 
       $receitas = [isset($dados['total_receita']) ? floatval($dados['total_receita']) : 0];
-      $despesas = [isset($dados['total_despesa']) ? floatval($dados['total_despesa']) : 0];
+      $despesas = [isset($dados['total_despesa']) ? -1 * floatval($dados['total_despesa']) : 0];
       $saldos = [isset($dados['saldo']) ? floatval($dados['saldo']) : 0];
 
         $dadosPorAno = [];
         $gastosPorAno = [];
 
-        $anosDisponiveis = [2025, 2024, 2023]; // ou busque dinamicamente do banco
+      $selectAnos = "select * from ResumoMensal where fk_usuario = $id";
+
+      $anos = mysqli_query($conn, $selectAnos);
+
+      $anosDisponiveis = [];
+      while ($pegaAnos = mysqli_fetch_assoc($anos)) {
+          $anosDisponiveis[] = $pegaAnos['ano'];
+      }
+
 
         foreach ($anosDisponiveis as $ano) {
             $dadosPorAno[$ano] = array_fill(0, 12, 0);
@@ -133,9 +141,16 @@
         <div class="d-flex justify-content-between align-items-center mb-3">
           <h3 class="mb-0">Análise Anual</h3>
           <select id="anoSelect" class="form-select w-auto">
-            <option value="2025" selected>2025</option>
-            <option value="2024">2024</option>
-            <option value="2023">2023</option>
+          
+          <?php
+            $selectAnosOp = "select * from ResumoMensal where fk_usuario = $id order by ano asc";
+            $anosOp = mysqli_query($conn, $selectAnosOp);
+            while ($pegaAnosOp = mysqli_fetch_assoc($anosOp)) {
+              $anosSel = $pegaAnosOp['ano'];
+              echo "<option value='$anosSel' selected>$anosSel</option>";
+            }
+          ?>
+
           </select>
         </div>
         <canvas id="graficoAnual" style="width: 100%; max-height: 350px;"></canvas>
