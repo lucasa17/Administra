@@ -164,19 +164,6 @@ BEGIN
   END IF;
 END //
 DELIMITER ;
--- Calcula detalhes da divida
-DELIMITER //
-CREATE TRIGGER tr_calcula_detalhes_divida
-BEFORE INSERT ON Divida
-FOR EACH ROW
-BEGIN
-    IF NEW.parcelas > 0 THEN
-        SET NEW.valor_parcela = NEW.valor_divida / NEW.parcelas;
-        SET NEW.mes_inicio = MONTH(NEW.data_primeira_parcela);
-        SET NEW.mes_final = MONTH(DATE_ADD(NEW.data_primeira_parcela, INTERVAL (NEW.parcelas - 1) MONTH));
-    END IF;
-END //
-DELIMITER ;
 -- Atualiza resumo mensal
 DELIMITER //
 CREATE TRIGGER tr_atualiza_resumo_renda_update
@@ -275,5 +262,73 @@ BEGIN
         SET NEW.mes_inicio = MONTH(NEW.data_primeira_parcela);
         SET NEW.mes_final = MONTH(DATE_ADD(NEW.data_primeira_parcela, INTERVAL (NEW.parcelas - 1) MONTH));
     END IF;
+END //
+DELIMITER ;
+-- Atualiza Renda, Despesas e Dividas quando deletadas
+DELIMITER //
+CREATE TRIGGER tr_atualiza_resumo_renda_delete
+AFTER DELETE ON Renda
+FOR EACH ROW
+BEGIN
+  DECLARE v_id INT;
+
+  SELECT id_resumo INTO v_id
+  FROM ResumoMensal
+  WHERE mes = MONTH(OLD.data_renda)
+    AND ano = YEAR(OLD.data_renda)
+    AND fk_usuario = OLD.fk_usuario
+  LIMIT 1;
+
+  IF (v_id IS NOT NULL) THEN
+    UPDATE ResumoMensal
+    SET total_receita = total_receita - OLD.valor_renda,
+        saldo = saldo - OLD.valor_renda
+    WHERE id_resumo = v_id;
+  END IF;
+END //
+-- Quebra de linha
+DELIMITER //
+CREATE TRIGGER tr_atualiza_resumo_despesa_delete
+AFTER DELETE ON Despesa
+FOR EACH ROW
+BEGIN
+  DECLARE v_id INT;
+
+  SELECT id_resumo INTO v_id
+  FROM ResumoMensal
+  WHERE mes = MONTH(OLD.data_despesa)
+    AND ano = YEAR(OLD.data_despesa)
+    AND fk_usuario = OLD.fk_usuario
+  LIMIT 1;
+
+  IF (v_id IS NOT NULL) THEN
+    UPDATE ResumoMensal
+    SET total_despesa = total_despesa - OLD.valor_despesa,
+        saldo = saldo + OLD.valor_despesa
+    WHERE id_resumo = v_id;
+  END IF;
+END //
+DELIMITER ;
+-- Quebra de linha
+DELIMITER //
+CREATE TRIGGER tr_atualiza_resumo_divida_delete
+AFTER DELETE ON Divida
+FOR EACH ROW
+BEGIN
+  DECLARE v_id INT;
+
+  SELECT id_resumo INTO v_id
+  FROM ResumoMensal
+  WHERE mes = MONTH(OLD.data_primeira_parcela)
+    AND ano = YEAR(OLD.data_primeira_parcela)
+    AND fk_usuario = OLD.fk_usuario
+  LIMIT 1;
+
+  IF (v_id IS NOT NULL) THEN
+    UPDATE ResumoMensal
+    SET total_despesa = total_despesa - OLD.valor_parcela,
+        saldo = saldo + OLD.valor_parcela
+    WHERE id_resumo = v_id;
+  END IF;
 END //
 DELIMITER ;
