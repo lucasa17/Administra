@@ -28,6 +28,7 @@
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="../CSS/carregando.css" rel="stylesheet" />
 
     <!-- Ícones Bootstrap -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
@@ -158,42 +159,87 @@
       </div>
     </div>  
 
+<?php 
+      $mesAtual = date('n');
 
-<?php
-        $mesAtual = date('n');
+      $selectValor = "SELECT * FROM ResumoMensal WHERE fk_usuario = $id AND mes = $mesAtual ORDER BY ano ASC";
+      $val = mysqli_query($conn, $selectValor);
+      $pegaValor = mysqli_fetch_assoc($val);
+      if ($pegaValor !== null) {
+          $valor = $pegaValor['saldo'];
+      } else {
+          $valor = 0; // Ou algum valor padrão que faça sentido
+      }
 
-        $selectValor = "select * from ResumoMensal where fk_usuario = $id and mes = $mesAtual order by ano asc";
-        $val = mysqli_query($conn, $selectValor);
-        $pegaValor = mysqli_fetch_assoc($val);
-        $valor = $pegaValor['saldo'];
+      if($valor > 0){
+      $sqlMetas = "SELECT * FROM Poupanca WHERE fk_usuario = $id and valor_atual < valor_meta";
+      $resultMetas = mysqli_query($conn, $sqlMetas);
 
-echo"
+      $row = mysqli_num_rows($resultMetas);
+      if($row > 0){
+
+      $optionsMetas = '';
+      while ($meta = mysqli_fetch_assoc($resultMetas)) {
+          $objetivo = $meta['objetivo'];
+          $valorFinal = number_format($meta['valor_meta'], 2, ',', '.');
+          $saldoAtual = number_format($meta['valor_atual'], 2, ',', '.'); // supondo que exista essa coluna
+          $optionsMetas .= "<option value='" . $meta['id_poupanca'] . "'> Meta: $objetivo - Valor Guardado: R$ $saldoAtual / Valor meta: R$ $valorFinal</option>";
+      }
+      echo"
       <div class='container'>
-        <div id='saldoPositivoAlert' class='alert alert-success d-flex justify-content-between align-items-center mt-3' style='display: none;'>
-          <div>
-            <i class='bi bi-cash-stack me-2'></i>
-            <strong>Parabéns!</strong> Você teve um saldo positivo de <span id='saldoValor'>R$ $valor</span> este mês. Deseja adicionar esse valor às suas metas?
-          </div>
-          <form action='salvaSaldo.php' method='POST' style='display:inline;'>
+        <div id='saldoPositivoAlert' class='alert alert-success d-flex flex-column gap-2 mt-3'>
+          <div class='d-flex justify-content-between align-items-center'>
             <div>
-              <input type='hidden' name='valor' value='$valor'>
-              <button name='op' id='btnSim' class='btn btn-success btn-sm me-2' value='sim'>Sim</button>
-              <button name='op' id='btnNao' class='btn btn-outline-secondary btn-sm' value='nao'>Não</button>
+              <i class='bi bi-cash-stack me-2'></i>
+              <strong>Parabéns!</strong> Você teve um saldo positivo de 
+              <span id='saldoValor'>R$ $valor </span> este mês.
+              Deseja adicionar parte desse valor a alguma meta?
             </div>
+            <button id='btnSim' class='btn btn-success btn-sm'>Sim</button>
+          </div>
+
+          <form id='formSelecionaMeta' action='salvaSaldo.php' method='POST' class='d-none mt-3'>
+            <div class='mb-2'>
+              <label class='form-label'>Escolha a meta:</label>
+              <select name='id_poupanca' class='form-select' required>
+                <option value=''>Selecione uma meta</option>
+                $optionsMetas
+              </select>
+            </div>
+            <div class='mb-2'>
+              <label class='form-label'>Quanto deseja aplicar?</label>
+              <input type='number' name='valor_aplicado' class='form-control' min='1' max='$valor' required placeholder='Digite o valor (máx: R$ $valor)'>
+              <input type='hidden' name='valor_total_disponivel' value='$valorFinal'>
+              <input type='hidden' name='saldoAtual' value='$saldoAtual'>
+              <input type='hidden' name='mes' value='$mesAtual'>
+            </div>
+            <button type='submit' class='btn btn-primary'>Confirmar</button>
           </form>
         </div>
       </div>
-      <div class='container'>
-        <div id='tempoMetaAlert' class='alert alert-warning d-flex justify-content-between align-items-center mt-3' style='display: none;'>
-          <div>
-            <i class='bi bi-hourglass-split me-2'></i>
-            <strong>Boa notícia!</strong> Mantendo uma economia mensal de <span id='valorMensal'>R$ 0,00</span>, 
-            você atingirá a meta '<span id='nomeMeta'>Meta Exemplo</span>' em apenas <span id='mesesRestantes'>X</span> mês(es).
-            Continue assim para alcançar seus objetivos!
-          </div>
-        </div>
-      </div>
-";
+      ";
+      $sqlMetas = "SELECT * FROM Poupanca WHERE fk_usuario = $id and valor_atual < valor_meta";
+      $resultMetas = mysqli_query($conn, $sqlMetas);
+          while($meta = mysqli_fetch_assoc($resultMetas)){
+            if($meta['meses_ate_meta'] != null){
+               $meses = $meta['meses_ate_meta'];
+               $nome = $meta['objetivo'];
+              echo"
+              <div class='container'>
+                <div id='tempoMetaAlert' class='alert alert-warning d-flex justify-content-between align-items-center mt-3' style='display: none;'>
+                  <div>
+                    <i class='bi bi-hourglass-split me-2'></i>
+                    <strong>Boa notícia!</strong> Mantendo essa economia mensal, 
+                    você atingirá a meta '<span id='nomeMeta'>$nome</span>' em <span id='mesesRestantes'>$meses</span> meses.
+                    Continue assim para alcançar seus objetivos!
+                  </div>
+                </div>
+              </div>
+            ";
+          }
+        }
+      }
+    }
 ?>
 
   <!-- RENDA - TABELA E GRÁFICO -->
@@ -406,6 +452,13 @@ echo"
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+    document.getElementById('btnSim')?.addEventListener('click', () => {
+      const form = document.getElementById('formSelecionaMeta');
+      if (form) form.classList.remove('d-none');
+    });
+  </script>
 
     <script>
       const meses = <?php echo json_encode($labelsMeses); ?>;

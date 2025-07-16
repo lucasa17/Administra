@@ -86,7 +86,7 @@ if(empty($_SESSION['ID_USER'])){
     <div class='container mt-4'>
         <div class='form-section bg-white p-4 rounded shadow-sm'>
         <h3>Cadastrar Renda</h3>
-        <form class='form' action='../PHP/cadastraRenda.php' method='post'>
+        <form class='form' action='cadastraRenda.php' method='post'>
 
             <label for='tipoRenda' class='mt-3'>Fonte de Renda:</label>
             <select name='txtRenda' id='tipoRenda' class='form-select' required>
@@ -127,13 +127,14 @@ if(empty($_SESSION['ID_USER'])){
     </div>
 
     <div id='mensagemRendaRepetida' class='alert alert-info mt-3 mb-0' style='display: none;'>
-      Esta renda será cadastrada automaticamente nos próximos meses. Se isso mudar, edite a renda e desmarque essa opção.
-    </div>
+      Ao marcar a opção sim, esta renda será cadastrada continuamente e automaticamente nos próximos meses.
+  </div>
 
     <button type='submit' class='btn btn-success mt-4'>Salvar Renda</button>
   </form>
   </div>
   </div>
+
   ";
 
   $queryFonte = mysqli_query($conn, "SELECT * FROM FonteRenda WHERE fk_usuario = $id ORDER BY fonte_da_renda ASC");
@@ -161,7 +162,7 @@ echo "
   <tr>
     <td class='text-center'>$nomeRenda</td>
     <td class='text-center'>
-      <form action='excluiFonteRenda.php' method='POST' style='display:inline;'>
+      <form action='excluiFonteRenda.php' method='POST' style='display:inline;' onsubmit='return confirm(\"Deseja realmente excluir esta fonte de renda?\");'>
         <input type='hidden' name='idFonte' value='$idFonte'>
         <button type='submit' class='btn btn-danger btn-sm'>Excluir</button>
       </form>
@@ -225,7 +226,7 @@ echo "
       </button>
     </td>
     <td class='text-center'>
-      <form action='excluiRenda.php' method='POST' style='display:inline;'>
+      <form action='excluiRenda.php' method='POST' style='display:inline;' onsubmit='return confirm(\"Deseja realmente excluir esta renda?\");'>
         <input type='hidden' name='idRenda' value='$idRenda'>
         <button type='submit' class='btn btn-danger btn-sm'>        
           <i class='bi bi-trash'></i>

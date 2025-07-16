@@ -112,18 +112,18 @@ if(empty($_SESSION['ID_USER'])){
           <option value=''>--Selecione--</option>
     ";
 
-    $categoria = "SELECT * from categoria where fk_usuario = $id or fk_usuario is null order by nome_categoria asc";
+     $categoria = "SELECT nome_categoria, MIN(id_categoria) AS id_categoria_unica
+              FROM categoria
+              WHERE fk_usuario = $id OR fk_usuario IS NULL
+              GROUP BY nome_categoria
+              ORDER BY nome_categoria ASC";
 
     $queryCategoria = mysqli_query($conn, $categoria);
 
-    while($pegaCategoria = mysqli_fetch_assoc($queryCategoria)){
-
-    $nomeCategoria = $pegaCategoria['nome_categoria'];
-    $idCategoria = $pegaCategoria['id_categoria'];
-
-    echo"
-        <option value='$idCategoria'>$nomeCategoria</option>
-    ";
+    while($pegaCategoria = mysqli_fetch_assoc($queryCategoria)) {
+      $nomeCategoria = $pegaCategoria['nome_categoria'];
+      $idCategoria = $pegaCategoria['id_categoria'];
+      echo "<option value='$idCategoria'>$nomeCategoria</option>";
     }
 
     echo"
@@ -143,18 +143,19 @@ if(empty($_SESSION['ID_USER'])){
           <option value=''>--Selecione--</option>
     ";
 
-    $tipoPagamento = "SELECT * from tipopagamento where fk_usuario = $id or fk_usuario is null order by nome_pagamento asc";
+   $tipoPagamento = "SELECT nome_pagamento, MIN(id_pagamento) AS id_pagamento_unico
+                  FROM tipopagamento
+                  WHERE fk_usuario = $id OR fk_usuario IS NULL
+                  GROUP BY nome_pagamento
+                  ORDER BY nome_pagamento ASC";
 
     $queryPagamento = mysqli_query($conn, $tipoPagamento);
 
+    // Assumindo que você está dentro de um <select>
     while($pegaPagamento = mysqli_fetch_assoc($queryPagamento)){
-
-    $nomePagamento= $pegaPagamento['nome_pagamento'];
-    $idPagamento = $pegaPagamento['id_pagamento'];
-
-    echo"
-        <option value='$idPagamento'>$nomePagamento</option>
-    ";
+        $nomePagamento = $pegaPagamento['nome_pagamento'];
+        $idPagamento = $pegaPagamento['id_pagamento_unico']; // Usamos o ID único agrupado
+        echo "<option value='$idPagamento'>$nomePagamento</option>";
     }
 
     echo"
@@ -318,7 +319,7 @@ while ($despesa = mysqli_fetch_assoc($queryDespesas)) {
           </button>
         </td>
         <td class='text-center'>
-          <form action='excluiDespesa.php' method='POST' style='display:inline;'>
+          <form action='excluiDespesa.php' method='POST' style='display:inline;' onsubmit='return confirm(\"Deseja realmente excluir esta despesa?\");'>
             <input type='hidden' name='idDespesa' value='$idDespesa'>
             <button type='submit' class='btn btn-danger btn-sm'>Excluir</button>
           </form>
@@ -494,11 +495,7 @@ document.addEventListener('DOMContentLoaded', function () {
   function confirmarExclusao(imgElement) {
 
 
-const confirmar = confirm("Deseja realmente excluir este registro?");
-if (confirmar) {
-  const linha = imgElement.closest('tr');
-  linha.remove();
-}
+
 }
 </script>
 

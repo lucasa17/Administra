@@ -98,8 +98,12 @@ if(empty($_SESSION['ID_USER'])){
             <option value=''>--Selecione--</option>
     ";
 
-    
-    $categoria = "SELECT * FROM categoriaDivida WHERE fk_usuario = $id OR fk_usuario IS NULL ORDER BY nome_categoria ASC";
+    $categoria = "SELECT nome_categoria, MIN(id_categoria) AS id_categoria_unica
+              FROM categoriaDivida
+              WHERE fk_usuario = $id OR fk_usuario IS NULL
+              GROUP BY nome_categoria
+              ORDER BY nome_categoria ASC";
+
     $queryCategoria = mysqli_query($conn, $categoria);
 
     while($pegaCategoria = mysqli_fetch_assoc($queryCategoria)) {
@@ -121,16 +125,20 @@ if(empty($_SESSION['ID_USER'])){
             <select name='txtTipoPagamento' id='tipoPagamento' class='form-select' required>
             <option value=''>--Selecione--</option>
             ";
-            
-                $tipoPagamento = "SELECT * from tipopagamento where fk_usuario = $id or fk_usuario is null order by nome_pagamento asc";
-                $queryPagamento = mysqli_query($conn, $tipoPagamento);
-            
-            while($pegaPagamento = mysqli_fetch_assoc($queryPagamento)){
-                $nomePagamento= $pegaPagamento['nome_pagamento'];
-                $idPagamento = $pegaPagamento['id_pagamento'];
-                echo "
-                    <option value='$idPagamento'>$nomePagamento</option>";
-                }
+          $tipoPagamento = "SELECT nome_pagamento, MIN(id_pagamento) AS id_pagamento_unico
+                            FROM tipopagamento
+                            WHERE fk_usuario = $id OR fk_usuario IS NULL
+                            GROUP BY nome_pagamento
+                            ORDER BY nome_pagamento ASC";
+
+          $queryPagamento = mysqli_query($conn, $tipoPagamento);
+
+          // Assumindo que você está dentro de um <select>
+          while($pegaPagamento = mysqli_fetch_assoc($queryPagamento)){
+              $nomePagamento = $pegaPagamento['nome_pagamento'];
+              $idPagamento = $pegaPagamento['id_pagamento_unico']; // Usamos o ID único agrupado
+              echo "<option value='$idPagamento'>$nomePagamento</option>";
+          }
                 echo "
                     <option value='Outro'>Outro...</option>
                     </select>
@@ -168,7 +176,7 @@ if(empty($_SESSION['ID_USER'])){
           <option value="">--Todos--</option>
           <?php
             // Carregar credores dinamicamente do banco
-            $queryCredores = "SELECT DISTINCT credor FROM divida WHERE fk_usuario = $id";
+            $queryCredores = "SELECT credor FROM divida WHERE fk_usuario = $id";
             $resultCredores = mysqli_query($conn, $queryCredores);
             while ($credor = mysqli_fetch_assoc($resultCredores)) {
                 echo "<option value='" . htmlspecialchars($credor['credor']) . "'>" . htmlspecialchars($credor['credor']) . "</option>";
@@ -183,7 +191,7 @@ if(empty($_SESSION['ID_USER'])){
           <option value="">--Todas--</option>
           <?php
             // Carregar categorias dinamicamente do banco
-            $queryCategorias = "SELECT DISTINCT nome_categoria FROM categoriaDividaWHERE fk_usuario = $id ORDER BY nome_categoria ASC";
+            $queryCategorias = "SELECT DISTINCT nome_categoria FROM categoriaDivida WHERE fk_usuario = $id ORDER BY nome_categoria ASC";
             $resultCategorias = mysqli_query($conn, $queryCategorias);
             while ($categoria = mysqli_fetch_assoc($resultCategorias)) {
                 $nomeCategoria = $categoria['nome_categoria'] ?? '-';
@@ -529,8 +537,6 @@ function abrirModalParcelas(idDivida) {
     modal.show();
 }
 
-  <!-- Script funcional -->
-  <script>
     const tipoPagamento = document.getElementById("tipoPagamento");
     const novoTipoWrapper = document.getElementById("novoTipoWrapper");
     const novoTipoInput = document.getElementById("novoTipo");
@@ -560,16 +566,6 @@ function abrirModalParcelas(idDivida) {
         categoria.add(novaCategoria);
       }
     });
-
-    function confirmarExclusao(imgElement) {
-
-
-  const confirmar = confirm("Deseja realmente excluir este registro?");
-  if (confirmar) {
-    const linha = imgElement.closest('tr');
-    linha.remove();
-  }
-}
 
 
   </script>
