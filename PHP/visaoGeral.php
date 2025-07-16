@@ -148,6 +148,7 @@
             while ($pegaAnosOp = mysqli_fetch_assoc($anosOp)) {
               $anosSel = $pegaAnosOp['ano'];
               echo "<option value='$anosSel' selected>$anosSel</option>";
+              
             }
           ?>
 
@@ -157,19 +158,43 @@
       </div>
     </div>  
 
-  <!-- Mensagem de saldo positivo -->
-  <div class="container">
-    <div id="saldoPositivoAlert" class="alert alert-success d-flex justify-content-between align-items-center mt-3" style="display: none;">
-      <div>
-        <i class="bi bi-cash-stack me-2"></i>
-        <strong>Parabéns!</strong> Você teve um saldo positivo de <span id="saldoValor">R$ 0,00</span> este mês. Deseja adicionar esse valor às suas metas?
+
+<?php
+        $mesAtual = date('n');
+
+        $selectValor = "select * from ResumoMensal where fk_usuario = $id and mes = $mesAtual order by ano asc";
+        $val = mysqli_query($conn, $selectValor);
+        $pegaValor = mysqli_fetch_assoc($val);
+        $valor = $pegaValor['saldo'];
+
+echo"
+      <div class='container'>
+        <div id='saldoPositivoAlert' class='alert alert-success d-flex justify-content-between align-items-center mt-3' style='display: none;'>
+          <div>
+            <i class='bi bi-cash-stack me-2'></i>
+            <strong>Parabéns!</strong> Você teve um saldo positivo de <span id='saldoValor'>R$ $valor</span> este mês. Deseja adicionar esse valor às suas metas?
+          </div>
+          <form action='salvaSaldo.php' method='POST' style='display:inline;'>
+            <div>
+              <input type='hidden' name='valor' value='$valor'>
+              <button name='op' id='btnSim' class='btn btn-success btn-sm me-2' value='sim'>Sim</button>
+              <button name='op' id='btnNao' class='btn btn-outline-secondary btn-sm' value='nao'>Não</button>
+            </div>
+          </form>
+        </div>
       </div>
-      <div>
-        <button id="btnSim" class="btn btn-success btn-sm me-2">Sim</button>
-        <button id="btnNao" class="btn btn-outline-secondary btn-sm">Não</button>
+      <div class='container'>
+        <div id='tempoMetaAlert' class='alert alert-warning d-flex justify-content-between align-items-center mt-3' style='display: none;'>
+          <div>
+            <i class='bi bi-hourglass-split me-2'></i>
+            <strong>Boa notícia!</strong> Mantendo uma economia mensal de <span id='valorMensal'>R$ 0,00</span>, 
+            você atingirá a meta '<span id='nomeMeta'>Meta Exemplo</span>' em apenas <span id='mesesRestantes'>X</span> mês(es).
+            Continue assim para alcançar seus objetivos!
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
+";
+?>
 
   <!-- RENDA - TABELA E GRÁFICO -->
     <div class="container mt-5"> 
@@ -203,8 +228,16 @@
           $fonteResult = mysqli_query($conn, $fonteQuery);
           $fonteRenda = mysqli_fetch_assoc($fonteResult)['fonte_da_renda'];
 
-          $rendaLabels[] = $fonteRenda;
-          $rendaValores[] = $renda['valor_renda'];
+          // Verifica se o label já existe
+          $key = array_search($fonteRenda, $rendaLabels);
+          if ($key === false) {
+              // Se não existe, adiciona novo label e valor
+              $rendaLabels[] = $fonteRenda;
+              $rendaValores[] = $renda['valor_renda'];
+          } else {
+              // Se já existe, soma o valor
+              $rendaValores[$key] += $renda['valor_renda'];
+          }
 
           // Renderiza a tabela normalmente
           $valorRenda = number_format($renda['valor_renda'], 2, ',', '.');
@@ -219,8 +252,7 @@
               </tbody>
           ";
       }
-
-    ?>
+      ?>
 
                 </table>
             </div>
@@ -272,12 +304,19 @@
               $nomeCategoria = $despesa['nome_categoria'] ?? '-';
               $valorDespesaFloat = $despesa['valor_despesa'];
 
-              $despesaLabels[] = $nomeCategoria;
-              $despesaValores[] = $valorDespesaFloat;
+              // Verifica se a categoria já existe
+              $key = array_search($nomeCategoria, $despesaLabels);
+              if ($key === false) {
+                  // Se não existe, adiciona nova categoria e valor
+                  $despesaLabels[] = $nomeCategoria;
+                  $despesaValores[] = $valorDespesaFloat;
+              } else {
+                  // Se já existe, soma o valor
+                  $despesaValores[$key] += $valorDespesaFloat;
+              }
 
               $dataDespesa = date("d/m/Y", strtotime($despesa['data_despesa']));
               $valorDespesa = number_format($valorDespesaFloat, 2, ',', '.');
-
               echo "
                   <tbody>
                       <tr>
@@ -288,8 +327,7 @@
                   </tbody>
               ";
           }
-
-        ?>
+          ?>
               </table>
             </div>
           </div>

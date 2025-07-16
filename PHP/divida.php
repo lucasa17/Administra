@@ -254,6 +254,7 @@ echo "
             <th>Valor Total (R$)</th>
             <th class='text-center'>Editar</th>
             <th class='text-center'>Excluir</th>
+            <th class='text-center'>Exibir</th>
           </tr>
         </thead>
         <tbody>
@@ -263,6 +264,7 @@ $totalDividas = 0;
 
 while ($divida = mysqli_fetch_assoc($queryDividas)) {
     $dataVencimento = date("d/m/Y", strtotime($divida['data_vencimento']));
+    // Using htmlspecialchars for displaying in table cells
     $nomeDivida = htmlspecialchars($divida['nome_divida']);
     $credor = htmlspecialchars($divida['credor']);
     $categoria = $divida['nome_categoria'] ?? '-';
@@ -273,67 +275,83 @@ while ($divida = mysqli_fetch_assoc($queryDividas)) {
     $valor = number_format($divida['valor_divida'], 2, ',', '.');
     $totalDividas += $divida['valor_divida'];
 
+    // Prepare variables for JavaScript function call
+    // Use the raw values for numbers and addslashes for strings
+    $jsIdDivida = $idDivida;
+    $jsValorDivida = $divida['valor_divida']; // Raw numeric value
+    $jsParcelas = $divida['parcelas']; // Raw numeric value
+    $jsDataVencimento = $divida['data_vencimento']; // Raw date string
+    $jsNomeDivida = addslashes($divida['nome_divida']); // Escaped string for JS
+
     echo "
-  <tr>
-    <td>$dataVencimento</td>
-    <td>$nomeDivida</td>
-    <td>$credor</td>
-    <td>$categoria</td>
-    <td>$tipoPagamento</td>
-    <td>$parcelas</td>
-    <td>R$ $valor</td>
+    <tr>
+      <td>{$dataVencimento}</td>
+      <td>{$nomeDivida}</td>
+      <td>{$credor}</td>
+      <td>{$categoria}</td>
+      <td>{$tipoPagamento}</td>
+      <td>{$parcelas}</td>
+      <td>R$ {$valor}</td>
 
-    <td class='text-center'>
-      <button 
-        type='button' 
-        class='btn btn-warning btn-sm'
-        onclick='abrirModalEdicao($idDivida, 
-          \"".addslashes($nomeDivida)."\", 
-          \"".addslashes($credor)."\", 
-          \"$divida[fk_categoria]\", 
-          \"$divida[fk_tipo_pagamento]\", 
-          \"$parcelas\", 
-          \"$divida[valor_divida]\", 
-          \"$divida[data_vencimento]\")'>
-        Editar
-      </button>
-    </td>
+      <td class='text-center'>
+        <button
+          type='button'
+          class='btn btn-warning btn-sm'
+          onclick='abrirModalEdicao({$idDivida},
+            \"".addslashes($nomeDivida)."\",
+            \"".addslashes($credor)."\",
+            \"{$divida['fk_categoria']}\",
+            \"{$divida['fk_tipo_pagamento']}\",
+            \"{$parcelas}\",
+            \"{$divida['valor_divida']}\",
+            \"{$divida['data_vencimento']}\")'>
+          Editar
+        </button>
+      </td>
 
-    <td class='text-center'>
-      <form action='excluiDivida.php' method='POST' onsubmit='return confirm(\"Deseja realmente excluir esta dívida?\");'>
-        <input type='hidden' name='idDivida' value='$idDivida'>
-        <button type='submit' class='btn btn-danger btn-sm'>Excluir</button>
-      </form>
-    </td>
-  </tr>
+      <td class='text-center'>
+        <form action='excluiDivida.php' method='POST' onsubmit='return confirm(\"Deseja realmente excluir esta dívida?\");'>
+          <input type='hidden' name='idDivida' value='{$idDivida}'>
+          <button type='submit' class='btn btn-danger btn-sm'>Excluir</button>
+        </form>
+      </td>
+      <td class='text-center'>
+        <button
+          type='button'
+          class='btn btn-info btn-sm'
+          onclick=\"exibirParcelas({$jsIdDivida}, {$jsValorDivida}, {$jsParcelas}, '{$jsDataVencimento}', '{$jsNomeDivida}')\">
+          Exibir
+        </button>
+      </td>
+    </tr>
     ";
 }
+      $valorTotalFormatado = number_format($totalDividas, 2, ',', '.');
 
-$valorTotalFormatado = number_format($totalDividas, 2, ',', '.');
 
+      echo " </tbody>
+            </table>
+          </div>
 
-echo " </tbody>
-      </table>
-    </div>
-
-<div class='container mt-3'>
-  <div class='alert alert-info text-end fw-bold'>
-      Total de Dívidas: R$ $valorTotalFormatado 
-  </div>
-</div>
-</div>
-";
-echo"
+      <div class='container mt-3'>
+        <div class='alert alert-info text-end fw-bold'>
+            Total de Dívidas: R$ $valorTotalFormatado 
+        </div>
+      </div>
+      </div>
+      ";
+      echo"
             </div>
         </div>
-    ";
+      ";
 ?>
 
 
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-  
+
+
 <!-- MODAL EDIÇÃO -->
 <div class="modal fade" id="modalEditarDivida" tabindex="-1" aria-labelledby="editarDividaLabel" aria-hidden="true">
   <div class="modal-dialog">
@@ -389,6 +407,31 @@ echo"
   </div>
 </div>
 
+ <!-- Modal Parcelas -->
+<div class="modal fade" id="modalParcelas" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Parcelas da Dívida</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Valor (R$)</th>
+              <th>Mês de Vencimento</th>
+            </tr>
+          </thead>
+          <tbody id="tabelaParcelas"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 <script>
   function abrirModalEdicao(id, nome, credor, categoria, tipoPagamento, parcelas, valor, data) {
     document.getElementById("editIdDivida").value = id;
@@ -404,6 +447,87 @@ echo"
     modal.show();
   }
 </script>
+
+<script>
+  function exibirParcelas(idDivida, valorTotal, parcelas, dataVencimento, nomeDivida) { // Adicione 'nomeDivida' aqui
+    // Calculando o valor de cada parcela
+    const valorParcela = valorTotal / parcelas;
+
+    // Formatando o valor da parcela
+    const valorParcelaFormatado = valorParcela.toFixed(2).replace('.', ',');
+
+    // Calculando as datas de vencimento das parcelas
+    const dataInicial = new Date(dataVencimento);
+    const tabelaParcelas = document.getElementById("tabelaParcelas");
+    tabelaParcelas.innerHTML = '';  // Limpa a tabela de parcelas
+
+    // Atualizar o título do modal com o nome da dívida
+    document.querySelector('#modalParcelas .modal-title').textContent = `Parcelas de: ${nomeDivida}`;
+
+
+    // Gerando as parcelas
+    for (let i = 0; i < parcelas; i++) {
+        // Criando uma nova linha para cada parcela
+        const tr = document.createElement('tr');
+
+        // Calculando a data da parcela
+        const vencimento = new Date(dataInicial);
+        vencimento.setMonth(vencimento.getMonth() + i);
+        const mesVencimento = vencimento.toLocaleString('pt-BR', { year: 'numeric', month: 'long' });
+
+        // Adicionando as células
+        tr.innerHTML = `
+            <td>${i + 1}</td>
+            <td>R$ ${valorParcelaFormatado}</td>
+            <td>${mesVencimento}</td>
+        `;
+
+        // Adicionando a linha na tabela
+        tabelaParcelas.appendChild(tr);
+    }
+
+    // Exibindo o modal de parcelas
+    const modal = new bootstrap.Modal(document.getElementById('modalParcelas'));
+    modal.show();
+}
+</script>
+
+
+<script>
+function abrirModalParcelas(idDivida) {
+    // Limpar o conteúdo da tabela antes de preencher
+    const tabelaParcelas = document.getElementById("tabelaParcelas");
+    tabelaParcelas.innerHTML = "";
+
+    // Fazer uma requisição AJAX para buscar as parcelas dessa dívida
+    fetch(`buscarParcelas.php?idDivida=${idDivida}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                data.parcelas.forEach((parcela, index) => {
+                    const tr = document.createElement("tr");
+
+                    tr.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>R$ ${parcela.valor.toFixed(2).replace('.', ',')}</td>
+                        <td>${parcela.data_vencimento}</td>
+                    `;
+
+                    tabelaParcelas.appendChild(tr);
+                });
+            } else {
+                alert("Erro ao carregar as parcelas.");
+            }
+        })
+        .catch(error => {
+            console.error("Erro na requisição:", error);
+            alert("Erro na requisição.");
+        });
+
+    // Mostrar o modal
+    const modal = new bootstrap.Modal(document.getElementById('modalParcelas'));
+    modal.show();
+}
 
   <!-- Script funcional -->
   <script>

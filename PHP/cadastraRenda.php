@@ -2,27 +2,41 @@
 session_start();
 include 'conexao.php';
 
-	$id = $_SESSION['ID_USER'];
-    
-    $valor = $_POST['numValor'];
-    $data = $_POST['txtData'];    
+$id = $_SESSION['ID_USER'];
+
+$valor = $_POST['numValor'];
+$data = $_POST['txtData'];    
+$op = $_POST['rendaRepetida'];    
 
     if ($_POST['txtNovaRenda'] != '') {
         $fonteRenda = $_POST['txtNovaRenda'];
-
-        $insert = "insert into FonteRenda (fonte_da_renda, fk_usuario) values ('$fonteRenda', $id)";
+        $insert = "INSERT INTO FonteRenda (fonte_da_renda, fk_usuario) VALUES ('$fonteRenda', $id)";
         mysqli_query($conn, $insert);
         $idFonte = mysqli_insert_id($conn);
-
-            $insertRenda = "insert into renda (fk_fonte, valor_renda, data_renda, fk_usuario) values ($idFonte, $valor, '$data', $id)";
-            mysqli_query($conn, $insertRenda);
-
-    }    
-    else{
+    } else {
         $idFonte = $_POST['txtRenda'];
-            $insertRenda = "insert into renda (fk_fonte, valor_renda, data_renda, fk_usuario) values ($idFonte, $valor, '$data', $id)";
+    }
+
+    if ($op == 'true') {
+        $start = new DateTime($data);
+        $now = new DateTime();
+        $start->setTime(0, 0);
+        $now->setTime(0, 0);
+
+        while ($start <= $now) {
+            $dataFormatada = $start->format('Y-m-d');
+
+            $insertRenda = "INSERT INTO renda (fk_fonte, valor_renda, data_renda, fixa, fk_usuario)
+                            VALUES ($idFonte, $valor, '$dataFormatada', $op, $id)";
             mysqli_query($conn, $insertRenda);
 
+            $start->modify('+1 month');
+        }
+    } else {
+        $insertRenda = "INSERT INTO renda (fk_fonte, valor_renda, data_renda, fixa, fk_usuario)
+                        VALUES ($idFonte, $valor, '$data', $op, $id)";
+        mysqli_query($conn, $insertRenda);
     }
+
     header("refresh: 0; url=renda.php");
 ?>

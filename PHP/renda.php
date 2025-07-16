@@ -116,6 +116,20 @@ if(empty($_SESSION['ID_USER'])){
     <label for='data' class='mt-3'>Data de recebimento:</label>
     <input type='date' name='txtData' id='data' class='form-control' required />
 
+    <label class='mt-3'>Essa renda se repete mensalmente?</label>
+    <div class='form-check'>
+      <input class='form-check-input' type='radio' name='rendaRepetida' id='rendaSim' value='true' required>
+      <label class='form-check-label' for='rendaSim'>Sim</label>
+    </div>
+    <div class='form-check'>
+      <input class='form-check-input' type='radio' name='rendaRepetida' id='rendaNao' value='false'>
+      <label class='form-check-label' for='rendaNao'>Não</label>
+    </div>
+
+    <div id='mensagemRendaRepetida' class='alert alert-info mt-3 mb-0' style='display: none;'>
+      Esta renda será cadastrada automaticamente nos próximos meses. Se isso mudar, edite a renda e desmarque essa opção.
+    </div>
+
     <button type='submit' class='btn btn-success mt-4'>Salvar Renda</button>
   </form>
   </div>
@@ -330,6 +344,27 @@ function abrirModalEdicao(botao) {
     });
   </script>
   
+<script>// Msg renda fixa
+    document.addEventListener("DOMContentLoaded", () => {
+    const tipoRenda = document.getElementById("tipoRenda");
+    const novoTipoWrapper = document.getElementById("novoTipoWrapper");
+
+    tipoRenda.addEventListener("change", () => {
+      novoTipoWrapper.style.display = tipoRenda.value === "Outro" ? "block" : "none";
+    });
+
+    const radiosRepetida = document.querySelectorAll('input[name="rendaRepetida"]');
+    const msgRepetida = document.getElementById("mensagemRendaRepetida");
+
+    radiosRepetida.forEach(radio => {
+      radio.addEventListener("change", () => {
+        msgRepetida.style.display = radio.value === "true" ? "block" : "none";
+      });
+    });
+  });
+  </script>
+
+
   <!-- FOOTER -->
   <footer class="mt-4">
   <div class="container text-center">
