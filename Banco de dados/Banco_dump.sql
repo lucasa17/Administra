@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 -- DROP DATABASE sistemaFinanceiro;
 CREATE DATABASE sistemaFinanceiro;
 USE sistemaFinanceiro;
