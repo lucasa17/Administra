@@ -122,7 +122,7 @@ if(empty($_SESSION['ID_USER'])){
 
     while($pegaCategoria = mysqli_fetch_assoc($queryCategoria)) {
       $nomeCategoria = $pegaCategoria['nome_categoria'];
-      $idCategoria = $pegaCategoria['id_categoria'];
+      $idCategoria = $pegaCategoria['id_categoria_unica'];
       echo "<option value='$idCategoria'>$nomeCategoria</option>";
     }
 
