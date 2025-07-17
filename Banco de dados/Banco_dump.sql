@@ -914,4 +914,3 @@ VALUES
   ('Empréstimo'),
   ('Consórcio'),
   ('Financiamento');
->>>>>>> c49a2a40487efd8e1aa659884382e3ad4b48e60d
