@@ -28,7 +28,7 @@ $id = $_SESSION['ID_USER'];
     $valorTotal = floatval($_POST['valor_total_disponivel']);
     $mes = $_POST['mes'];
 
-    echo"$saldoAtual, $valor, $valorTotal";
+    //echo"$saldoAtual, $valor, $valorTotal";
     if ($valor+$saldoAtual <= $valorTotal && $valor > 0) {
         $upMeta = "UPDATE poupanca SET valor_atual = valor_atual + $valor, meses_ate_meta = ($valorTotal-$valor)/$valor WHERE id_poupanca = $idMeta AND fk_usuario = $id";
         mysqli_query($conn, $upMeta);
@@ -47,7 +47,7 @@ $id = $_SESSION['ID_USER'];
               </div>
           </div>
           ";        
-        //header("refresh: 3.5; url=visaoGeral.php");
+        header("refresh: 3.5; url=visaoGeral.php");
     }
 
 ?>
