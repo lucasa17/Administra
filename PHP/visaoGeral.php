@@ -1,23 +1,75 @@
-    <?php
-  session_start();
-  include 'conexao.php';
-  mysqli_set_charset($conn, 'utf8');
+<?php
+session_start();
+include 'conexao.php';
+mysqli_set_charset($conn, 'utf8');
 
-    if(empty($_SESSION['ID_USER'])){
+if (empty($_SESSION['ID_USER'])) {
+    echo "
+        <div id='loadingOverlay'>
+            <div id='loadingCard'>
+            <h1>Administra</h1>
+            <img src='../IMAGENS/alerta.gif' alt='Carregando...' />
+            <strong><p class='mt-3'>Usuário não esta logado</p></strong>
+            </div>
+        </div>
+    ";
+    header("refresh: 3.5; url=../index.html");
+    exit();
+}
 
-      echo"	
-          <div id='loadingOverlay'>
-              <div id='loadingCard'>
-              <h1>Administra</h1>
-              <img src='../IMAGENS/alerta.gif' alt='Carregando...' />
-              <strong><p class='mt-3'>Usuário não esta logado</p></strong>
-              </div>
-          </div>
-          ";        
-      header("refresh: 3.5; url=../index.html");
+$id = $_SESSION['ID_USER'];
+
+// Meses para exibição
+$meses = [
+    1 => 'Jan', 2 => 'Fev', 3 => 'Mar', 4 => 'Abr', 5 => 'Mai', 6 => 'Jun',
+    7 => 'Jul', 8 => 'Ago', 9 => 'Set', 10 => 'Out', 11 => 'Nov', 12 => 'Dez'
+];
+
+// Captura filtros de mês e ano via GET
+$mesAtual = isset($_GET['mes']) ? intval($_GET['mes']) : date('n');
+$anoAtual = isset($_GET['ano']) ? intval($_GET['ano']) : date('Y');
+
+// Dados para o gráfico mensal filtrado
+$labelsMeses = [$meses[$mesAtual]];
+
+$sql = "SELECT total_receita, total_despesa, saldo 
+        FROM ResumoMensal 
+        WHERE fk_usuario = $id AND mes = $mesAtual AND ano = $anoAtual";
+
+$res = mysqli_query($conn, $sql);
+$dados = mysqli_fetch_assoc($res);
+
+$receitas = [isset($dados['total_receita']) ? floatval($dados['total_receita']) : 0];
+$despesas = [isset($dados['total_despesa']) ? -1 * floatval($dados['total_despesa']) : 0];
+$saldos   = [isset($dados['saldo']) ? floatval($dados['saldo']) : 0];
+
+// Preparar dados para gráfico anual
+$dadosPorAno = [];
+$gastosPorAno = [];
+
+$selectAnos = "SELECT DISTINCT ano FROM ResumoMensal WHERE fk_usuario = $id ORDER BY ano ASC";
+$anos = mysqli_query($conn, $selectAnos);
+$anosDisponiveis = [];
+while ($pegaAnos = mysqli_fetch_assoc($anos)) {
+    $anosDisponiveis[] = $pegaAnos['ano'];
+}
+
+foreach ($anosDisponiveis as $ano) {
+    $dadosPorAno[$ano] = array_fill(0, 12, 0);
+    $gastosPorAno[$ano] = array_fill(0, 12, 0);
+
+    $sql = "SELECT mes, total_receita, total_despesa 
+            FROM ResumoMensal 
+            WHERE fk_usuario = $id AND ano = $ano";
+
+    $res = mysqli_query($conn, $sql);
+    while ($row = mysqli_fetch_assoc($res)) {
+        $indice = intval($row['mes']) - 1;
+        $dadosPorAno[$ano][$indice] = floatval($row['total_receita']);
+        $gastosPorAno[$ano][$indice] = -1 * floatval($row['total_despesa']);
     }
-    
-  ?>
+}
+?>
     
     <!DOCTYPE html>
 <html lang="pt-BR">
@@ -75,172 +127,137 @@
         </div>
       </div>
     </nav>
-  <?php
-    $id = $_SESSION['ID_USER'];
-
-      $anoAtual = date('Y'); // Corrige a variável não definida
-      $meses = [
-        1 => 'Jan', 2 => 'Fev', 3 => 'Mar', 4 => 'Abr', 5 => 'Mai', 6 => 'Jun',
-        7 => 'Jul', 8 => 'Ago', 9 => 'Set', 10 => 'Out', 11 => 'Nov', 12 => 'Dez'
-      ];
-
-      $mesAtual = date('n'); // Número do mês atual (1-12)
-
-      $labelsMeses = [$meses[$mesAtual]];
-
-      $sql = "SELECT total_receita, total_despesa, saldo 
-              FROM ResumoMensal 
-              WHERE fk_usuario = $id AND mes = $mesAtual AND ano = $anoAtual";
-
-      $res = mysqli_query($conn, $sql);
-      $dados = mysqli_fetch_assoc($res);
-
-      $receitas = [isset($dados['total_receita']) ? floatval($dados['total_receita']) : 0];
-      $despesas = [isset($dados['total_despesa']) ? -1 * floatval($dados['total_despesa']) : 0];
-      $saldos = [isset($dados['saldo']) ? floatval($dados['saldo']) : 0];
-
-        $dadosPorAno = [];
-        $gastosPorAno = [];
-
-      $selectAnos = "select * from ResumoMensal where fk_usuario = $id";
-
-      $anos = mysqli_query($conn, $selectAnos);
-
-      $anosDisponiveis = [];
-      while ($pegaAnos = mysqli_fetch_assoc($anos)) {
-          $anosDisponiveis[] = $pegaAnos['ano'];
-      }
-
-
-        foreach ($anosDisponiveis as $ano) {
-            $dadosPorAno[$ano] = array_fill(0, 12, 0);
-            $gastosPorAno[$ano] = array_fill(0, 12, 0);
-
-            $sql = "SELECT mes, total_receita, total_despesa 
-                    FROM ResumoMensal 
-                    WHERE fk_usuario = $id AND ano = $ano";
-
-            $res = mysqli_query($conn, $sql);
-
-            while ($row = mysqli_fetch_assoc($res)) {
-                $indice = intval($row['mes']) - 1;
-                $dadosPorAno[$ano][$indice] = floatval($row['total_receita']);
-                $gastosPorAno[$ano][$indice] = -1 * floatval($row['total_despesa']);
-            }
-        }
-  ?>
+  
   <!-- VISÃO GERAL -->
   <!-- grafico de analise mensal-->
     <div class="container mt-5 d-flex justify-content-around flex-wrap gap-4">
-      <div class="form-section bg-white p-4 rounded shadow-sm" style="max-width: 600px; height: 450px;">
-        <h3 class="mb-4 text-center">Análise Mensal</h3>
-        <canvas id="graficoMensal" style="width: 100%; max-height: 350px;"></canvas>
-      </div>
 
-  <!-- grafico de analise anual-->
-      <div class="form-section bg-white p-4 rounded shadow-sm" style="max-width: 600px; height: 450px;">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-          <h3 class="mb-0">Análise Anual</h3>
-          <select id="anoSelect" class="form-select w-auto">
-          
-          <?php
-            $selectAnosOp = "select distinct ano from ResumoMensal where fk_usuario = $id order by ano asc";
-            $anosOp = mysqli_query($conn, $selectAnosOp);
-            while ($pegaAnosOp = mysqli_fetch_assoc($anosOp)) {
-              $anosSel = $pegaAnosOp['ano'];
-              echo "<option value='$anosSel' selected>$anosSel</option>";
-              
-            }
-          ?>
+  <!-- Gráfico Mensal com seletor de mês -->
+  <div class="form-section bg-white p-4 rounded shadow-sm" style="max-width: 600px; height: 450px;">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h3 class="mb-0">Análise Mensal</h3>
+      <select id="mesSelect" class="form-select w-auto">
+        <?php
+          foreach ($meses as $num => $nome) {
+            $selected = ($num == $mesAtual) ? 'selected' : '';
+            echo "<option value='$num' $selected>$nome</option>";
+          }
+        ?>
+      </select>
+    </div>
+    <canvas id="graficoMensal" style="width: 100%; max-height: 350px;"></canvas>
+  </div>
 
-          </select>
-        </div>
-        <canvas id="graficoAnual" style="width: 100%; max-height: 350px;"></canvas>
-      </div>
-    </div>  
+  <!-- Gráfico Anual com seletor de ano -->
+  <div class="form-section bg-white p-4 rounded shadow-sm" style="max-width: 600px; height: 450px;">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h3 class="mb-0">Análise Anual</h3>
+      <select id="anoSelect" class="form-select w-auto">
+        <?php
+          foreach ($anosDisponiveis as $ano) {
+            $selected = ($ano == $anoAtual) ? 'selected' : '';
+            echo "<option value='$ano' $selected>$ano</option>";
+          }
+        ?>
+      </select>
+    </div>
+    <canvas id="graficoAnual" style="width: 100%; max-height: 350px;"></canvas>
+  </div>
+</div>
 
 <?php 
-      $mesAtual = date('n');
+$mesAtual = isset($_GET['mes']) ? intval($_GET['mes']) : date('n');
+$anoAtual = isset($_GET['ano']) ? intval($_GET['ano']) : date('Y');
 
-      $selectValor = "SELECT * FROM ResumoMensal WHERE fk_usuario = $id AND mes = $mesAtual ORDER BY ano ASC";
-      $val = mysqli_query($conn, $selectValor);
-      $pegaValor = mysqli_fetch_assoc($val);
-      if ($pegaValor !== null) {
-          $valor = $pegaValor['saldo'];
-      } else {
-          $valor = 0; // Ou algum valor padrão que faça sentido
-      }
+$selectValor = "SELECT * FROM ResumoMensal 
+                WHERE fk_usuario = $id 
+                AND mes = $mesAtual 
+                AND ano = $anoAtual
+                ORDER BY ano ASC";
 
-      if($valor > 0){
-      $sqlMetas = "SELECT * FROM Poupanca WHERE fk_usuario = $id and valor_atual < valor_meta";
-      $resultMetas = mysqli_query($conn, $sqlMetas);
+$val = mysqli_query($conn, $selectValor);
+$pegaValor = mysqli_fetch_assoc($val);
 
-      $row = mysqli_num_rows($resultMetas);
-      if($row > 0){
+if ($pegaValor !== null) {
+    $valor = $pegaValor['saldo'];
+} else {
+    $valor = 0;
+}
 
-      $optionsMetas = '';
-      while ($meta = mysqli_fetch_assoc($resultMetas)) {
-          $objetivo = $meta['objetivo'];
-          $valorFinal = $meta['valor_meta'];
-          $saldoAtual = $meta['valor_atual'];
-          $optionsMetas .= "<option value='" . $meta['id_poupanca'] . "'> Meta: $objetivo - Valor Guardado: R$ $saldoAtual / Valor meta: R$ $valorFinal</option>";
-      }
-      echo"
-      <div class='container'>
-        <div id='saldoPositivoAlert' class='alert alert-success d-flex flex-column gap-2 mt-3'>
-          <div class='d-flex justify-content-between align-items-center'>
-            <div>
-              <i class='bi bi-cash-stack me-2'></i>
-              <strong>Parabéns!</strong> Você teve um saldo positivo de 
-              <span id='saldoValor'>R$ $valor </span> este mês.
-              Deseja adicionar parte desse valor a alguma meta?
+if ($valor > 0) {
+    $sqlMetas = "SELECT * FROM Poupanca 
+                 WHERE fk_usuario = $id 
+                 AND valor_atual < valor_meta";
+    $resultMetas = mysqli_query($conn, $sqlMetas);
+
+    $row = mysqli_num_rows($resultMetas);
+    if ($row > 0) {
+        $optionsMetas = '';
+        while ($meta = mysqli_fetch_assoc($resultMetas)) {
+            $objetivo = $meta['objetivo'];
+            $valorFinal = $meta['valor_meta'];
+            $saldoAtual = $meta['valor_atual'];
+            $optionsMetas .= "<option value='" . $meta['id_poupanca'] . "'> Meta: $objetivo - Valor Guardado: R$ $saldoAtual / Valor meta: R$ $valorFinal</option>";
+        }
+
+        echo "
+        <div class='container'>
+          <div id='saldoPositivoAlert' class='alert alert-success d-flex flex-column gap-2 mt-3'>
+            <div class='d-flex justify-content-between align-items-center'>
+              <div>
+                <i class='bi bi-cash-stack me-2'></i>
+                <strong>Parabéns!</strong> Você teve um saldo positivo de 
+                <span id='saldoValor'>R$ $valor </span> em $mesAtual/$anoAtual.
+                Deseja adicionar parte desse valor a alguma meta?
+              </div>
+              <button id='btnSim' class='btn btn-success btn-sm'>Sim</button>
             </div>
-            <button id='btnSim' class='btn btn-success btn-sm'>Sim</button>
+
+            <form id='formSelecionaMeta' action='salvaSaldo.php' method='POST' class='d-none mt-3'>
+              <div class='mb-2'>
+                <label class='form-label'>Escolha a meta:</label>
+                <select name='id_poupanca' class='form-select' required>
+                  <option value=''>Selecione uma meta</option>
+                  $optionsMetas
+                </select>
+              </div>
+              <div class='mb-2'>
+                <label class='form-label'>Quanto deseja aplicar?</label>
+                <input type='number' name='valor_aplicado' class='form-control' min='1' max='$valor' required placeholder='Digite o valor (máx: R$ $valor)'>
+                <input type='hidden' name='valor_total_disponivel' value='$valorFinal'>
+                <input type='hidden' name='saldoAtual' value='$saldoAtual'>
+                <input type='hidden' name='mes' value='$mesAtual'>
+                <input type='hidden' name='ano' value='$anoAtual'>
+              </div>
+              <button type='submit' class='btn btn-primary'>Confirmar</button>
+            </form>
           </div>
-
-          <form id='formSelecionaMeta' action='salvaSaldo.php' method='POST' class='d-none mt-3'>
-            <div class='mb-2'>
-              <label class='form-label'>Escolha a meta:</label>
-              <select name='id_poupanca' class='form-select' required>
-                <option value=''>Selecione uma meta</option>
-                $optionsMetas
-              </select>
-            </div>
-            <div class='mb-2'>
-              <label class='form-label'>Quanto deseja aplicar?</label>
-              <input type='number' name='valor_aplicado' class='form-control' min='1' max='$valor' required placeholder='Digite o valor (máx: R$ $valor)'>
-              <input type='hidden' name='valor_total_disponivel' value='$valorFinal'>
-              <input type='hidden' name='saldoAtual' value='$saldoAtual'>
-              <input type='hidden' name='mes' value='$mesAtual'>
-            </div>
-            <button type='submit' class='btn btn-primary'>Confirmar</button>
-          </form>
         </div>
-      </div>
-      ";
-      $sqlMetas = "SELECT * FROM Poupanca WHERE fk_usuario = $id and valor_atual < valor_meta";
-      $resultMetas = mysqli_query($conn, $sqlMetas);
-          while($meta = mysqli_fetch_assoc($resultMetas)){
-            if($meta['meses_ate_meta'] != null){
-               $meses = $meta['meses_ate_meta'];
-               $nome = $meta['objetivo'];
-              echo"
-              <div class='container'>
-                <div id='tempoMetaAlert' class='alert alert-warning d-flex justify-content-between align-items-center mt-3' style='display: none;'>
-                  <div>
-                    <i class='bi bi-hourglass-split me-2'></i>
-                    <strong>Boa notícia!</strong> Mantendo essa economia mensal, 
-                    você atingirá a meta '<span id='nomeMeta'>$nome</span>' em <span id='mesesRestantes'>$meses</span> meses.
-                    Continue assim para alcançar seus objetivos!
+        ";
+
+        mysqli_data_seek($resultMetas, 0); 
+        while ($meta = mysqli_fetch_assoc($resultMetas)) {
+            if ($meta['meses_ate_meta'] != null) {
+                $meses = $meta['meses_ate_meta'];
+                $nome = $meta['objetivo'];
+                echo "
+                <div class='container'>
+                  <div id='tempoMetaAlert' class='alert alert-warning d-flex justify-content-between align-items-center mt-3' style='display: none;'>
+                    <div>
+                      <i class='bi bi-hourglass-split me-2'></i>
+                      <strong>Boa notícia!</strong> Mantendo essa economia mensal, 
+                      você atingirá a meta '<span id='nomeMeta'>$nome</span>' em <span id='mesesRestantes'>$meses</span> meses.
+                      Continue assim para alcançar seus objetivos!
+                    </div>
                   </div>
                 </div>
-              </div>
-            ";
-          }
+                ";
+            }
         }
-      }
     }
+}
 ?>
+
 
   <!-- RENDA - TABELA E GRÁFICO -->
     <div class="container mt-5"> 
@@ -465,6 +482,8 @@
       const receitas = <?php echo json_encode($receitas); ?>;
       const despesas = <?php echo json_encode($despesas); ?>;
       const saldos = <?php echo json_encode($saldos); ?>;
+      const dadosPorAno = <?php echo json_encode($dadosPorAno); ?>;
+      const gastosPorAno = <?php echo json_encode($gastosPorAno); ?>;
     </script>
 
     <script>
@@ -491,101 +510,44 @@
     <script>  
       // Gráfico Mensal
       const ctxMensal = document.getElementById('graficoMensal').getContext('2d');
-
-      const graficoMensal = new Chart(ctxMensal, {
-        type: 'bar',
-        data: {
-          labels: meses,
-          datasets: [
-            {
-              label: 'Receita',
-              data: receitas,
-              backgroundColor: 'rgba(75, 192, 192, 0.7)',
-              borderColor: 'rgba(75, 192, 192, 1)',
-              borderWidth: 1
-            },
-            {
-              label: 'Despesa',
-              data: despesas,
-              backgroundColor: 'rgba(255, 99, 132, 0.7)',
-              borderColor: 'rgba(255, 99, 132, 1)',
-              borderWidth: 1
-            },
-            {
-              label: 'Saldo',
-              data: saldos,
-              backgroundColor: 'rgba(255, 206, 86, 0.7)',
-              borderColor: 'rgba(255, 206, 86, 1)',
-              borderWidth: 1
-            }
-          ]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          scales: {
-            y: {
-              beginAtZero: true
-            }
-          },
-          plugins: {
-            legend: {
-              position: 'top'
-            }
-          }
-        }
-      });
+const graficoMensal = new Chart(ctxMensal, {
+  type: 'bar',
+  data: {
+    labels: meses,
+    datasets: [
+      { label: 'Receita', data: receitas, backgroundColor: 'rgba(75, 192, 192, 0.7)' },
+      { label: 'Despesa', data: despesas, backgroundColor: 'rgba(255, 99, 132, 0.7)' },
+      { label: 'Saldo', data: saldos, backgroundColor: 'rgba(255, 206, 86, 0.7)' }
+    ]
+  },
+  options: { responsive: true, maintainAspectRatio: false }
+});
 
 
 
       // Gráfico Anual
-      const ctxAnual = document.getElementById('graficoAnual').getContext('2d');
-
-      const graficoAnual = new Chart(ctxAnual, {
-    type: 'bar',
-    data: {
-      labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
-      datasets: [
-        {
-          label: 'Renda Mensal (R$)',
-          data: dadosPorAno[2025],
-          fill: true,
-          backgroundColor: 'rgba(75, 192, 192, 0.2)',
-          borderColor: 'rgba(75, 192, 192, 1)',
-          tension: 0.2
-        },
-        {
-          label: 'Gastos Mensais (R$)',
-          data: gastosPorAno[2025],
-          fill: true,
-          backgroundColor: 'rgba(255, 99, 132, 0.2)',
-          borderColor: 'rgba(255, 99, 132, 1)',
-          tension: 0.2
-        }
-      ]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false, 
-      scales: { 
-        y: { beginAtZero: true },
-        x: {}
-      },
-      plugins: {
-        legend: {
-          display: true,
-          position: 'top'
-        }
-      }
-    }
-  });
-
-  document.getElementById('anoSelect').addEventListener('change', function () {
-    const ano = this.value;
-    graficoAnual.data.datasets[0].data = dadosPorAno[ano];
-    graficoAnual.data.datasets[1].data = gastosPorAno[ano];
-    graficoAnual.update();
-  });
+const ctxAnual = document.getElementById('graficoAnual').getContext('2d');
+const graficoAnual = new Chart(ctxAnual, {
+  type: 'bar',
+  data: {
+    labels: ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'],
+    datasets: [
+      { label: 'Renda Mensal (R$)', data: dadosPorAno[<?php echo $anoAtual; ?>], backgroundColor: 'rgba(75, 192, 192, 0.2)' },
+      { label: 'Gastos Mensais (R$)', data: gastosPorAno[<?php echo $anoAtual; ?>], backgroundColor: 'rgba(255, 99, 132, 0.2)' }
+    ]
+  },
+  options: { responsive: true, maintainAspectRatio: false }
+});
+  document.getElementById('mesSelect').addEventListener('change', function () {
+  const mes = this.value;
+  const ano = document.getElementById('anoSelect').value;
+  window.location.href = `visaoGeral.php?ano=${ano}&mes=${mes}`;
+});
+document.getElementById('anoSelect').addEventListener('change', function () {
+  const ano = this.value;
+  const mes = document.getElementById('mesSelect').value;
+  window.location.href = `visaoGeral.php?ano=${ano}&mes=${mes}`;
+});
 
 
         const ctxRenda = document.getElementById('graficoRenda').getContext('2d');
