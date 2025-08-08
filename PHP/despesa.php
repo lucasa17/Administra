@@ -172,7 +172,7 @@ echo "
   <label for='valor' class='mt-3'>Valor total (R$):</label>
   <input type='number' name='numValor' id='valor' class='form-control' min='0' step='0.01' required />
 
-  <label for='data' class='mt-3'>Data inicial do gasto:</label>
+  <label for='data' class='mt-3'>Data do gasto:</label>
   <input type='date' name='txtData' id='data' class='form-control' required />
 
   <button type='submit' class='btn btn-success mt-4'>Salvar Gasto</button>
@@ -284,12 +284,18 @@ echo "
         <tbody>
 ";
 
+error_reporting(0);
 $totalDespesas = 0;
-
 while ($despesa = mysqli_fetch_assoc($queryDespesas)) {
+    $idDependente = $despesa['fk_dependente'];
+    
+    $selectDependente = "select * from dependente where id_dependente = $idDependente";
+    $queryNomeDependente = mysqli_query($conn, $selectDependente);
+    $buscaDependente = mysqli_fetch_assoc($queryNomeDependente);
+    $nomeDependente = $buscaDependente['nome_dependente'] ?? '-';
+
     $dataDespesa = date("d/m/Y", strtotime($despesa['data_despesa']));
     $nomeDespesa = htmlspecialchars($despesa['nome_despesa']);
-    $nomeDependente = $despesa['nome_dependente'] ?? '-';
     $nomeCategoria = $despesa['nome_categoria'] ?? '-';
     $nomePagamento = $despesa['nome_pagamento'] ?? '-';
     $valorDespesaFloat = floatval($despesa['valor_despesa']);

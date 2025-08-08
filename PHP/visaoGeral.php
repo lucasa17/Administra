@@ -144,7 +144,7 @@
           <select id="anoSelect" class="form-select w-auto">
           
           <?php
-            $selectAnosOp = "select * from ResumoMensal where fk_usuario = $id order by ano asc";
+            $selectAnosOp = "select distinct ano from ResumoMensal where fk_usuario = $id order by ano asc";
             $anosOp = mysqli_query($conn, $selectAnosOp);
             while ($pegaAnosOp = mysqli_fetch_assoc($anosOp)) {
               $anosSel = $pegaAnosOp['ano'];
@@ -181,8 +181,8 @@
       $optionsMetas = '';
       while ($meta = mysqli_fetch_assoc($resultMetas)) {
           $objetivo = $meta['objetivo'];
-          $valorFinal = number_format($meta['valor_meta'], 2, ',', '.');
-          $saldoAtual = number_format($meta['valor_atual'], 2, ',', '.'); // supondo que exista essa coluna
+          $valorFinal = $meta['valor_meta'];
+          $saldoAtual = $meta['valor_atual'];
           $optionsMetas .= "<option value='" . $meta['id_poupanca'] . "'> Meta: $objetivo - Valor Guardado: R$ $saldoAtual / Valor meta: R$ $valorFinal</option>";
       }
       echo"

@@ -288,7 +288,7 @@ while ($divida = mysqli_fetch_assoc($queryDividas)) {
     $jsIdDivida = $idDivida;
     $jsValorDivida = $divida['valor_divida']; // Raw numeric value
     $jsParcelas = $divida['parcelas']; // Raw numeric value
-    $jsDataVencimento = $divida['data_vencimento']; // Raw date string
+    $jsDataVencimento = $divida['data_primeira_parcela']; // Raw date string
     $jsNomeDivida = addslashes($divida['nome_divida']); // Escaped string for JS
 
     echo "
