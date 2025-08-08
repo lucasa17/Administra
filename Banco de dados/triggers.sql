@@ -273,9 +273,9 @@ BEGIN
   DECLARE v_id INT;
   SELECT id_resumo INTO v_id
   FROM ResumoMensal
-  WHERE mes = MONTH(NEW.data_despesa)
-    AND ano = YEAR(NEW.data_despesa)
-    AND fk_usuario = NEW.fk_usuario
+  WHERE mes = MONTH(OLD.data_despesa)
+    AND ano = YEAR(OLD.data_despesa)
+    AND fk_usuario = OLD.fk_usuario
   LIMIT 1;
   IF (v_id IS NOT NULL) THEN
     DELETE FROM ResumoMensal
@@ -292,9 +292,9 @@ BEGIN
   DECLARE v_id INT;
   SELECT id_resumo INTO v_id
   FROM ResumoMensal
-  WHERE mes = MONTH(NEW.data_renda)
-    AND ano = YEAR(NEW.data_renda)
-    AND fk_usuario = NEW.fk_usuario
+  WHERE mes = MONTH(OLD.data_renda)
+    AND ano = YEAR(OLD.data_renda)
+    AND fk_usuario = OLD.fk_usuario
   LIMIT 1;
   IF (v_id IS NOT NULL) THEN
     DELETE FROM ResumoMensal
