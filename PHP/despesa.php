@@ -114,7 +114,7 @@ if(empty($_SESSION['ID_USER'])){
 
      $categoria = "SELECT nome_categoria, MIN(id_categoria) AS id_categoria_unica
               FROM categoria
-              WHERE fk_usuario = $id OR fk_usuario IS NULL
+              WHERE fk_usuario = $id OR fk_usuario IS NULL AND nome_categoria != 'Metas'
               GROUP BY nome_categoria
               ORDER BY nome_categoria ASC";
 
@@ -145,7 +145,7 @@ if(empty($_SESSION['ID_USER'])){
 
    $tipoPagamento = "SELECT nome_pagamento, MIN(id_pagamento) AS id_pagamento_unico
                   FROM tipopagamento
-                  WHERE fk_usuario = $id OR fk_usuario IS NULL AND  nome_pagamento != 'Alocação interna'
+                  WHERE fk_usuario = $id OR fk_usuario IS NULL
                   GROUP BY nome_pagamento
                   ORDER BY nome_pagamento ASC";
 
@@ -210,7 +210,7 @@ echo "
 
           <?php
           $categoriaSel = "SELECT id_categoria, nome_categoria FROM categoria 
-          WHERE fk_usuario = $id OR fk_usuario IS NULL AND nome_categoria != 'Metas'
+          WHERE fk_usuario = $id OR fk_usuario IS NULL
           ORDER BY nome_categoria ASC";
 
           $categorias = mysqli_query($conn,$categoriaSel);
@@ -415,7 +415,9 @@ document.addEventListener('DOMContentLoaded', function () {
           <label for="editCategoria" class="form-label mt-3">Categoria:</label>
           <select class="form-select" name="editCategoria" id="editCategoria">
             <?php
-              $cats = mysqli_query($conn, "SELECT * FROM categoria WHERE fk_usuario = $id OR fk_usuario IS NULL ORDER BY nome_categoria ASC");
+              $cats = mysqli_query($conn, "SELECT * FROM categoria 
+              WHERE (fk_usuario = $id OR fk_usuario IS NULL) AND id_categoria != 4
+              ORDER BY nome_categoria ASC");
               while ($c = mysqli_fetch_assoc($cats)) {
                 echo "<option value='{$c['id_categoria']}'>{$c['nome_categoria']}</option>";
               }

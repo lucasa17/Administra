@@ -191,12 +191,14 @@ if(empty($_SESSION['ID_USER'])){
           <option value="">--Todas--</option>
           <?php
             // Carregar categorias dinamicamente do banco
-            $queryCategorias = "SELECT DISTINCT nome_categoria FROM categoriaDivida WHERE fk_usuario = $id ORDER BY nome_categoria ASC";
+            $queryCategorias = "SELECT DISTINCT nome_categoria FROM CategoriaDivida
+             WHERE fk_usuario = $id or fk_usuario is null  
+             ORDER BY nome_categoria ASC";
             $resultCategorias = mysqli_query($conn, $queryCategorias);
             while ($categoria = mysqli_fetch_assoc($resultCategorias)) {
                 $nomeCategoria = $categoria['nome_categoria'] ?? '-';
                 if ($nomeCategoria != '-') {
-                  echo "<option value='" . htmlspecialchars($nomeCategoria) . "'>" . htmlspecialchars($nomeCategoria) . "</option>";
+                  echo "<option value='$nomeCategoria'>$nomeCategoria</option>";
                 }
             }
           ?>
