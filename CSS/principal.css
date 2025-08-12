@@ -111,3 +111,8 @@ footer {
   height: 100% !important;
   max-height: 450px;
 }
+
+.table-responsive{
+  max-height: 300px;
+  overflow: scroll;
+}

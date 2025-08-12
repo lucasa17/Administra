@@ -15,7 +15,6 @@ CREATE TABLE TipoPagamento(
 	nome_pagamento VARCHAR(45) NOT NULL UNIQUE,
 	fk_usuario INT,
 	FOREIGN KEY (fk_usuario) REFERENCES Usuario(id_usuario)  ON DELETE CASCADE ON UPDATE CASCADE
-
 );
 -- Como o usuário ganhou seu dinheiro
 CREATE TABLE FonteRenda(
@@ -61,8 +60,8 @@ CREATE TABLE Divida (
 CREATE TABLE Renda (
 	id_renda INT AUTO_INCREMENT PRIMARY KEY,
 	valor_renda DECIMAL(10,2),
-	data_renda DATE NOT NULL,
-  fixa boolean,
+	data_renda DATE,
+    fixa boolean,
 	fk_usuario INT NOT NULL,
 	fk_fonte INT NOT NULL,
 	FOREIGN KEY (fk_usuario) REFERENCES Usuario(id_usuario)  ON DELETE CASCADE ON UPDATE CASCADE,
@@ -112,8 +111,7 @@ CREATE TABLE ResumoMensal (
   total_despesa DECIMAL(10,2),
   saldo DECIMAL(10,2),
   saldo_meta DECIMAL(10,2),
-  fk_usuario INT,
-  UNIQUE (mes)
+  fk_usuario INT
 );
 
 DELIMITER #
