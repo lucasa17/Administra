@@ -145,7 +145,7 @@ if(empty($_SESSION['ID_USER'])){
 
    $tipoPagamento = "SELECT nome_pagamento, MIN(id_pagamento) AS id_pagamento_unico
                   FROM tipopagamento
-                  WHERE fk_usuario = $id OR fk_usuario IS NULL
+                  WHERE fk_usuario = $id OR fk_usuario IS NULL AND  nome_pagamento != 'Alocação interna'
                   GROUP BY nome_pagamento
                   ORDER BY nome_pagamento ASC";
 
@@ -209,9 +209,9 @@ echo "
           <option value="">--Todas--</option>
 
           <?php
-          // Buscar categorias do usuário para popular o select
-
-          $categoriaSel = "SELECT id_categoria, nome_categoria FROM categoria WHERE fk_usuario = $id OR fk_usuario IS NULL ORDER BY nome_categoria ASC";
+          $categoriaSel = "SELECT id_categoria, nome_categoria FROM categoria 
+          WHERE fk_usuario = $id OR fk_usuario IS NULL AND nome_categoria != 'Metas'
+          ORDER BY nome_categoria ASC";
 
           $categorias = mysqli_query($conn,$categoriaSel);
           while ($cat = mysqli_fetch_assoc($categorias)) {

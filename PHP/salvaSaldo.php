@@ -27,6 +27,7 @@ $id = $_SESSION['ID_USER'];
     $valor = floatval($_POST['valor_aplicado']);
     $valorTotal = floatval($_POST['valor_total_disponivel']);
     $mes = $_POST['mes'];
+    $nome = $POST['nomeMeta'];
 
     //echo"$saldoAtual, $valor, $valorTotal";
     if ($valor+$saldoAtual <= $valorTotal && $valor > 0) {
@@ -35,6 +36,12 @@ $id = $_SESSION['ID_USER'];
         
         $upMensal = "UPDATE resumoMensal SET saldo_meta = saldo_meta + $valor, saldo = saldo - $valor where fk_usuario = $id and mes = $mes";
         mysqli_query($conn, $upMensal);
+
+        $data = date('Y-m-d');
+        $inDespesa = "INSERT INTO despesa (nome_despesa, valor_despesa, data_despesa, fk_usuario, fk_categoria, fk_tipo_pagamento) 
+        values ('$nome', $valor, '$data', $id, 4, 6)";
+        mysqli_query($conn, $inDespesa);
+
         header("refresh: 0; url=visaoGeral.php");
     }
     else{

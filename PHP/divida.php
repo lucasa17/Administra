@@ -127,7 +127,7 @@ if(empty($_SESSION['ID_USER'])){
             ";
           $tipoPagamento = "SELECT nome_pagamento, MIN(id_pagamento) AS id_pagamento_unico
                             FROM tipopagamento
-                            WHERE fk_usuario = $id OR fk_usuario IS NULL
+                            WHERE fk_usuario = $id OR fk_usuario IS NULL AND  nome_pagamento != 'Alocação interna'
                             GROUP BY nome_pagamento
                             ORDER BY nome_pagamento ASC";
 

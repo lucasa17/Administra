@@ -228,6 +228,7 @@ if ($valor > 0) {
                 <input type='hidden' name='saldoAtual' value='$saldoAtual'>
                 <input type='hidden' name='mes' value='$mesAtual'>
                 <input type='hidden' name='ano' value='$anoAtual'>
+                <input type='hidden' name='nomeMeta' value='$objetivo'>
               </div>
               <button type='submit' class='btn btn-primary'>Confirmar</button>
             </form>

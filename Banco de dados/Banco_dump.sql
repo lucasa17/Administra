@@ -440,7 +440,8 @@ VALUES
   ('Dinheiro'),
   ('Cartão Débito'),
   ('Cartão Crédito'),
-  ('Cheque');
+  ('Cheque'),
+  ('Alocação interna');
 -- Fontes de renda
 INSERT INTO FonteRenda (fonte_da_renda)
 VALUES 
@@ -452,7 +453,8 @@ INSERT INTO Categoria (nome_categoria)
 VALUES 
   ('Alimentação'),
   ('Transporte'),
-  ('Lazer');
+  ('Lazer'),
+  ('Metas');
 
 -- Categorias de dívida
 INSERT INTO CategoriaDivida (nome_categoria)
