@@ -8,7 +8,6 @@ CREATE TABLE Usuario (
 	email_usuario VARCHAR(90) NOT NULL UNIQUE,
 	senha_usuario VARCHAR(245)
 );
-SELECT * FROM usuario;
 -- Tipo de pagamento das despesas e dividas
 CREATE TABLE TipoPagamento(
 	id_pagamento INT AUTO_INCREMENT PRIMARY KEY,
@@ -93,10 +92,12 @@ CREATE TABLE Despesa (
 	valor_despesa DECIMAL(10,2),
 	data_despesa DATE NOT NULL,
 	fixo BOOLEAN DEFAULT FALSE,
+    fk_meta int,
 	fk_dependente int,
 	fk_usuario INT NOT NULL,
 	fk_categoria INT NOT NULL,
 	fk_tipo_pagamento INT NOT NULL,
+    FOREIGN KEY (fk_meta) REFERENCES Poupanca(id_poupanca) ON DELETE CASCADE ON UPDATE NO ACTION,
 	FOREIGN KEY (fk_dependente) REFERENCES Dependente(id_dependente) ON DELETE CASCADE ON UPDATE CASCADE,
 	FOREIGN KEY (fk_usuario) REFERENCES Usuario(id_usuario) ON DELETE CASCADE ON UPDATE CASCADE,
 	FOREIGN KEY (fk_tipo_pagamento) REFERENCES TipoPagamento(id_pagamento)  ON DELETE CASCADE ON UPDATE CASCADE,
@@ -113,7 +114,6 @@ CREATE TABLE ResumoMensal (
   saldo_meta DECIMAL(10,2),
   fk_usuario INT
 );
-
 DELIMITER #
 CREATE PROCEDURE VerDespesasPorMes(
 	IN p_mes INT,

@@ -37,6 +37,6 @@ $op = $_POST['rendaRepetida'];
                         VALUES ($idFonte, $valor, '$data', $op, $id)";
         mysqli_query($conn, $insertRenda);
     }
-    echo"$insertRenda";
-    //header("refresh: 0; url=renda.php");
+    //echo"$insertRenda";
+    header("refresh: 0; url=renda.php");
 ?>

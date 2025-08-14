@@ -304,6 +304,8 @@ while ($despesa = mysqli_fetch_assoc($queryDespesas)) {
 
     $totalDespesas += $valorDespesaFloat;
 
+
+    
     echo "
       <tr>
         <td>$dataDespesa</td>

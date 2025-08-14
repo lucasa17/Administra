@@ -27,19 +27,26 @@ $id = $_SESSION['ID_USER'];
     $valor = floatval($_POST['valor_aplicado']);
     $valorTotal = floatval($_POST['valor_total_disponivel']);
     $mes = $_POST['mes'];
-    $nome = $POST['nomeMeta'];
+    $nome = $_POST['nomeMeta'];
+
 
     //echo"$saldoAtual, $valor, $valorTotal";
     if ($valor+$saldoAtual <= $valorTotal && $valor > 0) {
         $upMeta = "UPDATE poupanca SET valor_atual = valor_atual + $valor, meses_ate_meta = ($valorTotal-$valor)/$valor WHERE id_poupanca = $idMeta AND fk_usuario = $id";
         mysqli_query($conn, $upMeta);
         
-        $upMensal = "UPDATE resumoMensal SET saldo_meta = saldo_meta + $valor, saldo = saldo - $valor where fk_usuario = $id and mes = $mes";
-        mysqli_query($conn, $upMensal);
+        /*$upMensal = "UPDATE resumoMensal SET saldo_meta = saldo_meta + $valor, saldo = saldo - $valor, total_despesa = total_despesa + $valor where fk_usuario = $id and mes = $mes";
+        mysqli_query($conn, $upMensal); 
+        $mesAtual = date('m');
+        $anoAtual = date('Y');
+        $upMensalAtual = "UPDATE resumoMensal SET saldo = saldo + $valor, total_despesa = total_despesa - $valor where fk_usuario = $id and mes = $mesAtual and ano = $anoAtual";
+        mysqli_query($conn, $upMensalAtual);
+        */
 
-        $data = date('Y-m-d');
-        $inDespesa = "INSERT INTO despesa (nome_despesa, valor_despesa, data_despesa, fk_usuario, fk_categoria, fk_tipo_pagamento) 
-        values ('$nome', $valor, '$data', $id, 4, 6)";
+        $data = $data = date('Y-m-d', mktime(0, 0, 0, $mes, date('d'), date('Y')));
+        //echo $data;
+        $inDespesa = "INSERT INTO despesa (nome_despesa, valor_despesa, data_despesa, fk_usuario, fk_categoria, fk_tipo_pagamento, fk_meta) 
+        values ('$nome', $valor, '$data', $id, 4, 6, $idMeta)";
         mysqli_query($conn, $inDespesa);
 
         header("refresh: 0; url=visaoGeral.php");

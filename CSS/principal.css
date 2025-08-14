@@ -34,7 +34,7 @@ body > .container {
 
 /* Seções como formulário ou consulta */
 .form-section, .consulta-section {
-  background-color: #fff;
+  background-color: lightblue;
   padding: 20px;
   border-radius: 8px;
   max-width: 900px;
