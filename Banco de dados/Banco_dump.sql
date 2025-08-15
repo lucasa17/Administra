@@ -406,8 +406,10 @@ BEGIN
     AND fk_usuario = OLD.fk_usuario
   LIMIT 1;
   IF (v_id IS NOT NULL) THEN
-    DELETE FROM ResumoMensal
-		WHERE id_resumo = v_id;
+    UPDATE ResumoMensal
+    SET total_despesa = total_despesa - OLD.valor_despesa,
+        saldo = saldo + OLD.valor_despesa
+    WHERE id_resumo = v_id;
   END IF;
 END //
 DELIMITER ;

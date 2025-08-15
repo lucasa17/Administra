@@ -145,7 +145,7 @@ if(empty($_SESSION['ID_USER'])){
 
    $tipoPagamento = "SELECT nome_pagamento, MIN(id_pagamento) AS id_pagamento_unico
                   FROM tipopagamento
-                  WHERE fk_usuario = $id OR fk_usuario IS NULL
+                  WHERE fk_usuario = $id OR fk_usuario IS NULL and nome_pagamento != 'Alocação interna'
                   GROUP BY nome_pagamento
                   ORDER BY nome_pagamento ASC";
 
@@ -210,7 +210,7 @@ echo "
 
           <?php
           $categoriaSel = "SELECT id_categoria, nome_categoria FROM categoria 
-          WHERE fk_usuario = $id OR fk_usuario IS NULL
+          WHERE fk_usuario = $id OR fk_usuario IS NULL AND nome_categoria != 'Metas'
           ORDER BY nome_categoria ASC";
 
           $categorias = mysqli_query($conn,$categoriaSel);
@@ -258,9 +258,8 @@ $selectDespesas = "SELECT d.*, cat.nome_categoria, tp.nome_pagamento
                    FROM despesa d
                    LEFT JOIN categoria cat ON d.fk_categoria = cat.id_categoria
                    LEFT JOIN tipopagamento tp ON d.fk_tipo_pagamento = tp.id_pagamento
-                   WHERE d.fk_usuario = $id
+                   WHERE d.fk_usuario = $id AND cat.nome_categoria != 'Metas'
                    ORDER BY d.data_despesa DESC";
-
 $queryDespesas = mysqli_query($conn, $selectDespesas);
 
 echo "

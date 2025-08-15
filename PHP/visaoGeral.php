@@ -280,7 +280,7 @@ if ($valor > 0) {
     
     $id = $_SESSION['ID_USER'];
 
-      $selectRendas = "SELECT * FROM renda WHERE fk_usuario = $id";
+      $selectRendas = "SELECT * FROM renda WHERE fk_usuario = $id order by data_renda desc";
       $queryRendas = mysqli_query($conn, $selectRendas);
 
       $rendaLabels = [];
@@ -427,7 +427,7 @@ if ($valor > 0) {
                             FROM divida d
                             LEFT JOIN categoriaDivida c ON d.fk_categoria = c.id_categoria
                             WHERE d.fk_usuario = $id
-                            ORDER BY d.data_vencimento ASC";
+                            ORDER BY d.data_vencimento desc";
 
           $queryDividas = mysqli_query($conn, $selectDividas);
 
