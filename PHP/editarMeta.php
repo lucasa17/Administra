@@ -6,11 +6,10 @@ include 'conexao.php';
 
     $idMeta = $_POST['idMeta'];
     $objetivo = $_POST['editObjetivo'];
-    $valorInicial = $_POST['editValorInicial'];
     $valorFinal = $_POST['editValorFinal'];
 
   
-    $update = "update poupanca set objetivo  = '$objetivo', valor_atual = $valorInicial, valor_meta = $valorFinal 
+    $update = "update poupanca set objetivo  = '$objetivo', valor_meta = $valorFinal 
     where id_poupanca = $idMeta and fk_usuario = $id";
 
     mysqli_query($conn, $update);

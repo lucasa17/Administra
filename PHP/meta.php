@@ -78,7 +78,7 @@ echo "
     <div class='container mt-4'>
         <div class='form-section bg-white p-4 rounded shadow-sm'>
             <h3>Cadastrar Meta</h3>
-            <form class='formMeta' action='cadastraMeta.php' method='post'>
+            <form class='formMeta' action='cadastraMeta.php' method='post' onsubmit='return validarFormulario()'>
                 <label for='objetivo' class='mt-3'>Objetivo:</label>
                 <input type='text' name='txtObjetivo' id='objetivo' class='form-control' placeholder='Descreva o objetivo da meta' required />
 
@@ -207,7 +207,7 @@ echo "
 <div class="modal fade" id="modalEditarMeta" tabindex="-1" aria-labelledby="modalEditarMetaLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form action="editarMeta.php" method="POST" id="formEditarMeta">
+            <form action="editarMeta.php" method="POST" id="formEditarMeta" onsubmit="return validarEdicaoMeta()">
                 <input type="hidden" name="idMeta" id="editIdMeta">
                 <div class="modal-header">
                     <h5 class="modal-title" id="modalEditarMetaLabel">Editar Meta</h5>
@@ -216,13 +216,14 @@ echo "
                 <div class="modal-body">
                     <label for="editObjetivo" class="form-label">Objetivo:</label>
                     <input type="text" id="editObjetivo" name="editObjetivo" class="form-control" required />
-
-                    <label for="editValorInicial" class="form-label mt-3">Valor Atual (R$):</label>
-                    <input type="number" id="editValorInicial" name="editValorInicial" class="form-control" min="0" step="0.01" required />
-
+    
                     <label for="editValorFinal" class="form-label mt-3">Valor Meta (R$):</label>
                     <input type="number" id="editValorFinal" name="editValorFinal" class="form-control" min="0" step="0.01" required />
                 </div>
+                
+                <div id="despesasMeta" class="mt-4">
+                </div>
+
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
                     <button type="submit" class="btn btn-success">Salvar</button>
@@ -235,22 +236,58 @@ echo "
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-    // Função para abrir modal e preencher campos com dados da linha
-    function abrirModalEdicao(elemento) {
+   function abrirModalEdicao(elemento) {
         const linha = elemento.closest('tr');
         const objetivo = linha.cells[0].textContent;
-        const valorAtual = linha.cells[1].textContent;
-        const valorMeta = linha.cells[2].textContent;
+        const valorAtual = parseFloat(linha.cells[1].textContent);
+        const valorMeta = parseFloat(linha.cells[2].textContent);
         const idMeta = linha.dataset.idMeta;
 
         document.getElementById('editObjetivo').value = objetivo.trim();
-        document.getElementById('editValorInicial').value = valorAtual.trim();
-        document.getElementById('editValorFinal').value = valorMeta.trim();
+        document.getElementById('editValorFinal').value = valorMeta;
         document.getElementById('editIdMeta').value = idMeta;
+
+        document.getElementById('formEditarMeta').dataset.valorAtual = valorAtual;
+         carregarDespesas(idMeta);
 
         const modal = new bootstrap.Modal(document.getElementById('modalEditarMeta'));
         modal.show();
     }
+
+
+    function validarFormulario() {
+        const valorInicial = parseFloat(document.getElementById('valorInicial').value);
+        const valorFinal = parseFloat(document.getElementById('valorFinal').value);
+        if (valorInicial >= valorFinal) {
+            alert('O valor do Aporte Inicial deve ser menor que o Valor Final.');
+            return false;  
+        }
+    return true;                       
+    }
+
+    function validarEdicaoMeta() {
+        const valorFinal = parseFloat(document.getElementById('editValorFinal').value);
+        const valorAtual = parseFloat(document.getElementById('formEditarMeta').dataset.valorAtual);
+
+        if (valorFinal < valorAtual) {
+            alert("O valor da meta não pode ser menor que o valor atual.");
+            return false;
+        }
+        return true;
+    }
+
+    function carregarDespesas(idMeta) {
+        fetch(`buscarDespesasMeta.php?idMeta=${idMeta}`)
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('despesasMeta').innerHTML = html;
+            })
+            .catch(error => {
+                console.error("Erro ao buscar despesas:", error);
+                document.getElementById('despesasMeta').innerHTML = "<p class='text-danger'>Erro ao carregar despesas.</p>";
+            });
+    }
+
 </script>
 
 <footer class="mt-4">
