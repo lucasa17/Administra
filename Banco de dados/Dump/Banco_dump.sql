@@ -74,7 +74,7 @@ CREATE TABLE Poupanca (
 	objetivo VARCHAR(50),
 	valor_atual DECIMAL(10,2) NOT NULL,
 	valor_meta DECIMAL(10,2) NOT NULL,
-    meses_ate_meta INT,
+  meses_ate_meta INT,
 	fk_usuario INT,
 	FOREIGN KEY (fk_usuario) REFERENCES Usuario(id_usuario)  ON DELETE CASCADE ON UPDATE CASCADE
 );

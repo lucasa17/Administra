@@ -1,3 +1,12 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
 <?php
 session_start();
 include 'conexao.php';
@@ -11,7 +20,7 @@ if (!isset($_SESSION['ID_USER']) || !isset($_GET['idMeta'])) {
 $idUsuario = $_SESSION['ID_USER'];
 $idMeta = intval($_GET['idMeta']);
 
-$sql = "SELECT nome_despesa, valor_despesa, data_despesa FROM despesa WHERE fk_usuario = $idUsuario AND fk_meta = $idMeta ORDER BY data_despesa DESC";
+$sql = "SELECT * FROM despesa WHERE fk_usuario = $idUsuario AND fk_meta = $idMeta ORDER BY data_despesa DESC";
 $result = mysqli_query($conn, $sql);
 
 if (mysqli_num_rows($result) === 0) {
@@ -25,24 +34,36 @@ echo "
     <table class='table table-sm table-bordered mt-2' style='width: 99%;'>
         <thead>
             <tr>
-                <th>Descrição</th>
                 <th>Valor (R$)</th>
                 <th>Data</th>
+                <th>Excluir</th>
             </tr>
         </thead>
         <tbody>
 ";
 
 while ($row = mysqli_fetch_assoc($result)) {
-    $desc = htmlspecialchars($row['nome_despesa']);
     $valor = number_format($row['valor_despesa'], 2, ',', '.');
     $data = date("d/m/Y", strtotime($row['data_despesa']));
+    $idDespesa = $row['id_despesa'];
     echo "
         <tr>
-            <td>$desc</td>
             <td>$valor</td>
             <td>$data</td>
+            <td>
+                <form action='excluiDespesaMeta.php' method='POST'>
+                    <input type='hidden' name='idMeta' value='$idMeta'>
+                    <input type='hidden' name='idDespesa' value='$idDespesa'>
+                    <input type='hidden' name='valor' value='$valor'>
+                    <button type='submit' class='btn btn-sm btn-danger'>
+                        <i class='bi bi-trash'></i>
+                    </button>
+                </form>
+            </td>
         </tr>
     ";
-}
+    }
 echo "</tbody></table></div>";
+?>
+</body>
+</html>
