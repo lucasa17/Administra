@@ -315,14 +315,16 @@ while ($divida = mysqli_fetch_assoc($queryDividas)) {
             \"{$parcelas}\",
             \"{$divida['valor_divida']}\",
             \"{$divida['data_vencimento']}\")'>
-          Editar
+          <i class='bi bi-pencil-square'></i>
         </button>
       </td>
 
       <td class='text-center'>
         <form action='excluiDivida.php' method='POST' onsubmit='return confirm(\"Deseja realmente excluir esta dívida?\");'>
           <input type='hidden' name='idDivida' value='{$idDivida}'>
-          <button type='submit' class='btn btn-danger btn-sm'>Excluir</button>
+          <button type='submit' class='btn btn-danger btn-sm' Style='Background-color:Red;' >        
+            <i class='bi bi-trash'></i>
+          </button>
         </form>
       </td>
       <td class='text-center'>

@@ -123,7 +123,7 @@ echo "
       </button>
       <form id='form-excluir-$idDependente' action='excluiDependente.php' method='POST' style='display:inline;'>
         <input type='hidden' name='idDependente' value='$idDependente'>
-        <button type='submit' class='btn btn-sm btn-outline-danger'>
+        <button type='submit' class='btn btn-sm btn-outline-danger' Style='Background-color:Red;'>
           <i class='bi bi-trash'></i>
         </button>
       </form>

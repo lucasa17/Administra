@@ -322,13 +322,15 @@ while ($despesa = mysqli_fetch_assoc($queryDespesas)) {
               \"$despesa[fk_tipo_pagamento]\", 
               \"$despesa[valor_despesa]\", 
               \"$despesa[data_despesa]\")'>
-            Editar
+            <i class='bi bi-pencil-square'></i>
           </button>
         </td>
         <td class='text-center'>
           <form action='excluiDespesa.php' method='POST' style='display:inline;' onsubmit='return confirm(\"Deseja realmente excluir esta despesa?\");'>
             <input type='hidden' name='idDespesa' value='$idDespesa'>
-            <button type='submit' class='btn btn-danger btn-sm'>Excluir</button>
+          <button type='submit' class='btn btn-danger btn-sm' Style='Background-color:Red;'>        
+            <i class='bi bi-trash'></i>
+          </button>          
           </form>
         </td>
       </tr>

@@ -228,7 +228,7 @@ echo "
     <td class='text-center'>
       <form action='excluiRenda.php' method='POST' style='display:inline;' onsubmit='return confirm(\"Deseja realmente excluir esta renda?\");'>
         <input type='hidden' name='idRenda' value='$idRenda'>
-        <button type='submit' class='btn btn-danger btn-sm'>        
+        <button type='submit' class='btn btn-danger btn-sm' Style='Background-color:Red;' >        
           <i class='bi bi-trash'></i>
         </button>
       </form>

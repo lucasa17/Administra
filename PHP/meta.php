@@ -144,7 +144,7 @@ while($pegaMeta = mysqli_fetch_assoc($queryMetaPendentes)) {
             <td class='text-center'>
                 <form action='excluiMeta.php' method='POST' style='display:inline;' onsubmit='return confirm(\"Deseja realmente excluir esta meta?\");'>
                     <input type='hidden' name='idMeta' value='$idMeta'>
-                    <button type='submit' class='btn btn-sm btn-danger'>
+                    <button type='submit' class='btn btn-sm btn-danger' Style='Background-color:Red;'>
                         <i class='bi bi-trash'></i>
                     </button>
                 </form>
