@@ -118,7 +118,7 @@
                             <input type='hidden' name='idDespesa' value='$idDespesa'>
                             <input type='hidden' name='valor' value='$valor'>
                             <button type='submit' class='btn btn-sm btn-danger' Style='Background-color:Red;'>
-                                <i class='bi bi-trash'></i> Excluir
+                                <i class='bi bi-trash'></i>
                             </button>
                         </form>
                     </td>
