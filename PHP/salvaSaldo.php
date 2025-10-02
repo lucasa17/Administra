@@ -30,18 +30,9 @@ $id = $_SESSION['ID_USER'];
     $nome = $_POST['nomeMeta'];
 
 
-    //echo"$saldoAtual, $valor, $valorTotal";
     if ($valor+$saldoAtual <= $valorTotal && $valor > 0) {
         $upMeta = "UPDATE poupanca SET valor_atual = valor_atual + $valor, meses_ate_meta = ($valorTotal-$valor)/$valor WHERE id_poupanca = $idMeta AND fk_usuario = $id";
         mysqli_query($conn, $upMeta);
-        
-        /*$upMensal = "UPDATE resumoMensal SET saldo_meta = saldo_meta + $valor, saldo = saldo - $valor, total_despesa = total_despesa + $valor where fk_usuario = $id and mes = $mes";
-        mysqli_query($conn, $upMensal); 
-        $mesAtual = date('m');
-        $anoAtual = date('Y');
-        $upMensalAtual = "UPDATE resumoMensal SET saldo = saldo + $valor, total_despesa = total_despesa - $valor where fk_usuario = $id and mes = $mesAtual and ano = $anoAtual";
-        mysqli_query($conn, $upMensalAtual);
-        */
 
         $data = $data = date('Y-m-d', mktime(0, 0, 0, $mes, date('d'), date('Y')));
         //echo $data;

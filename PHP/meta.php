@@ -82,8 +82,8 @@ echo "
                 <label for='objetivo' class='mt-3'>Objetivo:</label>
                 <input type='text' name='txtObjetivo' id='objetivo' class='form-control' placeholder='Descreva o objetivo da meta' required />
 
-                <label for='valorInicial' class='mt-3'>Aporte Inicial (R$):</label>
-                <input type='number' name='numAporteInicial' id='valorInicial' class='form-control' min='0' step='0.01' required />
+                <!--<label for='valorInicial' class='mt-3'>Aporte Inicial (R$):</label>
+                <input type='number' name='numAporteInicial' id='valorInicial' class='form-control' min='0' step='0.01' required />-->
 
                 <label for='valorFinal' class='mt-3'>Valor Final (R$):</label>
                 <input type='number' name='numValorFinal' id='valorFinal' class='form-control' min='0' step='0.01' required />

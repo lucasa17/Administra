@@ -55,8 +55,17 @@
 </nav>
 
 <div class="container mt-5">
+    
+
     <div class="consulta-section bg-white p-4 rounded shadow-sm">
-        <h2 class="mt-4">Alocações realizadas</h2>
+        <div class="d-flex justify-content-between mb-4">
+            <a href="meta.php" class="btn btn-secondary">
+                <i class="bi bi-arrow-left-circle"></i> Voltar
+            </a>
+           <!--<a href="#" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#adicionarDespesaModal">
+                <i class="bi bi-plus-circle"></i> Adicionar Alocação
+            </a>-->
+        </div>
         <?php
         session_start();
         include 'conexao.php';
@@ -81,9 +90,9 @@
         $pegaMeta = mysqli_query($conn, $sqlMeta);
         $metafetch = mysqli_fetch_assoc($pegaMeta);
         $nomeMeta = $metafetch['objetivo'];
-
+        echo "<h2 class='text-center mt-4'>Alocações realizadas</h2>";
+        echo "<h4>Meta: $nomeMeta</h4>";
         echo "
-            <h4>Meta: $nomeMeta</h4>
             <table class='table table-bordered table-striped'>
                 <thead class='table-light'>
                     <tr>
@@ -121,6 +130,36 @@
         ?>
     </div>
 </div>
+
+<!-- Modal Adicionar Despesa 
+<div class="modal fade" id="adicionarDespesaModal" tabindex="-1" aria-labelledby="adicionarDespesaModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="adicionarDespesaModalLabel">Adicionar Despesa</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      </div>
+      <div class="modal-body">
+        <form action="cadastraDespesaMeta.php" method="POST">
+          <div class="mb-3">
+            <label for="valorDespesa" class="form-label">Valor (R$)</label>
+            <input type="number" class="form-control" id="valorDespesa" name="valorDespesa" required>
+          </div>
+          <div class="mb-3">
+            <label for="dataDespesa" class="form-label">Data</label>
+            <input type="date" class="form-control" id="dataDespesa" name="dataDespesa" required>
+          </div>
+          <input type="hidden" name="idMeta" value="<?php echo $idMeta; ?>">
+          <div class="text-center">
+            <button type="submit" class="btn btn-success">Adicionar</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+-->
 
 <footer class="mt-4">
     <div class="container text-center">

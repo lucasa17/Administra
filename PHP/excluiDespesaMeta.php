@@ -16,5 +16,5 @@ include 'conexao.php';
     //echo $delete;
     mysqli_query($conn, $delete);
 
-    header("refresh: 0; url=meta.php");
+    header("refresh: 0; url=buscarDespesasMeta.php");
 ?>
