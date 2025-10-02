@@ -109,6 +109,7 @@ echo "
                             <th>Objetivo</th>
                             <th>Valor Atual (R$)</th>
                             <th>Valor Meta (R$)</th>
+                            <th class='text-center'>Alocações</th>
                             <th class='text-center'>Editar</th>
                             <th class='text-center'>Excluir</th>
                         </tr>
@@ -127,6 +128,14 @@ while($pegaMeta = mysqli_fetch_assoc($queryMetaPendentes)) {
             <td>$objetivo</td>
             <td>$valorAtual</td>
             <td>$valorMeta</td>
+            <td class='text-center'>
+                <form action='buscarDespesasMeta.php' method='POST' style='display:inline;'>
+                    <input type='hidden' name='idMeta' value='$idMeta'>
+                    <button type='submit' class='btn btn-sm btn-danger'>
+                        <i>Alocações</i>
+                    </button>
+                </form>
+            </td>
             <td class='text-center'>
                 <button type='button' class='btn btn-sm btn-primary' onclick='abrirModalEdicao(this)'>
                     <i class='bi bi-pencil-square'></i>
@@ -150,9 +159,6 @@ echo "
     </div>
 ";
 
-// ---
-// Nova seção para metas atingidas
-// ---
 
 $selectMetaAtingidas = "SELECT * from poupanca where fk_usuario = $id and valor_atual >= valor_meta order by objetivo asc";
 $queryMetaAtingidas = mysqli_query($conn, $selectMetaAtingidas);
@@ -248,8 +254,6 @@ echo "
         document.getElementById('editIdMeta').value = idMeta;
 
         document.getElementById('formEditarMeta').dataset.valorAtual = valorAtual;
-         carregarDespesas(idMeta);
-
         const modal = new bootstrap.Modal(document.getElementById('modalEditarMeta'));
         modal.show();
     }
@@ -275,19 +279,6 @@ echo "
         }
         return true;
     }
-
-    function carregarDespesas(idMeta) {
-        fetch(`buscarDespesasMeta.php?idMeta=${idMeta}`)
-            .then(response => response.text())
-            .then(html => {
-                document.getElementById('despesasMeta').innerHTML = html;
-            })
-            .catch(error => {
-                console.error("Erro ao buscar despesas:", error);
-                document.getElementById('despesasMeta').innerHTML = "<p class='text-danger'>Erro ao carregar despesas.</p>";
-            });
-    }
-
 </script>
 
 <footer class="mt-4">

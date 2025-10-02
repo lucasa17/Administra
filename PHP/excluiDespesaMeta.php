@@ -6,14 +6,15 @@ include 'conexao.php';
     
     $idMeta = $_POST['idMeta'];
     $idDespesa = $_POST['idDespesa'];
-    $valor = $_POST['valor'];
+    $valor = floatval($_POST['valor']);
 
     $update = "update poupanca set valor_atual = valor_atual - $valor where id_poupanca = $idMeta";
-    echo $update;
-    //mysqli_query($conn, $update);
+    //echo $update;
+    mysqli_query($conn, $update);
 
     $delete = "delete from despesa where fk_usuario = $id and id_despesa = $idDespesa";
-    //mysqli_query($conn, $delete);
+    //echo $delete;
+    mysqli_query($conn, $delete);
 
-    //header("refresh: 0; url=meta.php");
+    header("refresh: 0; url=meta.php");
 ?>
