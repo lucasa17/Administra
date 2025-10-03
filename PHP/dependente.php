@@ -121,7 +121,7 @@ echo "
       <button class='btn btn-sm btn-outline-primary me-2' onclick=\"abrirModalEdicao('$idDependente', '$nomeDependente', '$relacaoDependente')\">
         <i class='bi bi-pencil-square'></i>
       </button>
-      <form id='form-excluir-$idDependente' action='excluiDependente.php' method='POST' style='display:inline;'>
+      <form id='form-excluir-$idDependente' action='excluiDependente.php' method='POST' style='display:inline;' onsubmit='return confirm(\"Deseja realmente excluir este dependente?\");'>
         <input type='hidden' name='idDependente' value='$idDependente'>
         <button type='submit' class='btn btn-sm btn-outline-danger' Style='Background-color:Red;'>
           <i class='bi bi-trash'></i>

@@ -255,13 +255,13 @@ echo "
     <table id='tabelaDividas' class='table table-bordered align-middle'>
         <thead class='table-light'>
           <tr>
-            <th>Data Vencimento</th>
-            <th>Nome da Dívida</th>
+            <th>Vencimento</th>
+            <th>Dívida</th>
             <th>Credor</th>
             <th>Categoria</th>
             <th>Tipo Pagamento</th>
             <th>Parcelas</th>
-            <th>Valor Total (R$)</th>
+            <th>Valor Total</th>
             <th class='text-center'>Editar</th>
             <th class='text-center'>Excluir</th>
             <th class='text-center'>Exibir</th>
@@ -285,23 +285,21 @@ while ($divida = mysqli_fetch_assoc($queryDividas)) {
     $valor = number_format($divida['valor_divida'], 2, ',', '.');
     $totalDividas += $divida['valor_divida'];
 
-    // Prepare variables for JavaScript function call
-    // Use the raw values for numbers and addslashes for strings
     $jsIdDivida = $idDivida;
-    $jsValorDivida = $divida['valor_divida']; // Raw numeric value
-    $jsParcelas = $divida['parcelas']; // Raw numeric value
-    $jsDataVencimento = $divida['data_primeira_parcela']; // Raw date string
-    $jsNomeDivida = addslashes($divida['nome_divida']); // Escaped string for JS
+    $jsValorDivida = $divida['valor_divida'];
+    $jsParcelas = $divida['parcelas']; 
+    $jsDataVencimento = $divida['data_primeira_parcela']; 
+    $jsNomeDivida = addslashes($divida['nome_divida']); 
 
     echo "
     <tr>
-      <td>{$dataVencimento}</td>
-      <td>{$nomeDivida}</td>
-      <td>{$credor}</td>
-      <td>{$categoria}</td>
-      <td>{$tipoPagamento}</td>
-      <td>{$parcelas}</td>
-      <td>R$ {$valor}</td>
+      <td>$dataVencimento</td>
+      <td>$nomeDivida</td>
+      <td>$credor</td>
+      <td>$categoria</td>
+      <td>$tipoPagamento</td>
+      <td>$parcelas</td>
+      <td>R$$valor</td>
 
       <td class='text-center'>
         <button
@@ -490,7 +488,7 @@ while ($divida = mysqli_fetch_assoc($queryDividas)) {
         // Adicionando as células
         tr.innerHTML = `
             <td>${i + 1}</td>
-            <td>R$ ${valorParcelaFormatado}</td>
+            <td>R$${valorParcelaFormatado}</td>
             <td>${mesVencimento}</td>
         `;
 
@@ -521,7 +519,7 @@ function abrirModalParcelas(idDivida) {
 
                     tr.innerHTML = `
                         <td>${index + 1}</td>
-                        <td>R$ ${parcela.valor.toFixed(2).replace('.', ',')}</td>
+                        <td>R$${parcela.valor.toFixed(2).replace('.', ',')}</td>
                         <td>${parcela.data_vencimento}</td>
                     `;
 

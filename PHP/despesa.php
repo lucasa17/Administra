@@ -312,7 +312,7 @@ while ($despesa = mysqli_fetch_assoc($queryDespesas)) {
         <td>$nomeDependente</td>
         <td>$nomeCategoria</td>
         <td>$nomePagamento</td>
-        <td>R$ $valorDespesa</td>
+        <td>R$$valorDespesa</td>
         <td class='text-center'>
           <button type='button' class='btn btn-warning btn-sm' onclick='abrirModalEdicao(
               $idDespesa, 

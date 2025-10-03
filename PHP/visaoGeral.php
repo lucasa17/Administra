@@ -207,7 +207,7 @@ if ($valor > 0) {
               <div>
                 <i class='bi bi-cash-stack me-2'></i>
                 <strong>Parabéns!</strong> Você teve um saldo positivo de 
-                <span id='saldoValor'>R$ $valor </span> em $mesAtual/$anoAtual.
+                <span id='saldoValor'>R$$valor </span> em $mesAtual/$anoAtual.
                 Deseja adicionar parte desse valor a alguma meta?
               </div>
               <button id='btnSim' class='btn btn-success btn-sm'>Sim</button>
@@ -223,7 +223,7 @@ if ($valor > 0) {
               </div>
               <div class='mb-2'>
                 <label class='form-label'>Quanto deseja aplicar?</label>
-                <input type='number' name='valor_aplicado' class='form-control' min='1' max='$valor' required placeholder='Digite o valor (máx: R$ $valor)'>
+                <input type='number' name='valor_aplicado' class='form-control' min='1' max='$valor' required placeholder='Digite o valor (máx: R$$valor)'>
                 <input type='hidden' name='valor_total_disponivel' value='$valorFinal'>
                 <input type='hidden' name='saldoAtual' value='$saldoAtual'>
                 <input type='hidden' name='mes' value='$mesAtual'>
@@ -311,7 +311,7 @@ if ($valor > 0) {
                   <tr>
                       <td>$dataRenda</td>
                       <td>$fonteRenda</td>
-                      <td>R$ $valorRenda</td>
+                      <td>R$$valorRenda</td>
                   </tr>
               </tbody>
           ";
@@ -386,7 +386,7 @@ if ($valor > 0) {
                       <tr>
                           <td>$dataDespesa</td>
                           <td>$nomeCategoria</td>
-                          <td>R$ $valorDespesa</td>
+                          <td>R$$valorDespesa</td>
                       </tr>
                   </tbody>
               ";
@@ -446,7 +446,7 @@ if ($valor > 0) {
                   <tbody>
                       <tr>
                           <td>$categoria</td>
-                          <td>R$ $valorFormatado</td>
+                          <td>R$$valorFormatado</td>
                       </tr>
                   </tbody>
               ";

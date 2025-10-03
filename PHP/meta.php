@@ -119,15 +119,15 @@ echo "
 
 while($pegaMeta = mysqli_fetch_assoc($queryMetaPendentes)) {
     $objetivo = $pegaMeta['objetivo'];
-    $valorAtual = $pegaMeta['valor_atual'];
-    $valorMeta = $pegaMeta['valor_meta'];
+    $valorAtual = number_format($pegaMeta['valor_atual'], 2, ',', '.');
+    $valorMeta = number_format($pegaMeta['valor_meta'], 2, ',', '.');
     $idMeta = $pegaMeta['id_poupanca'];
 
     echo "
         <tr data-id-meta='$idMeta'>
             <td>$objetivo</td>
-            <td>$valorAtual</td>
-            <td>$valorMeta</td>
+            <td>R$$valorAtual</td>
+            <td>R$$valorMeta</td>
             <td class='text-center'>
                 <form action='buscarDespesasMeta.php' method='POST' style='display:inline;'>
                     <input type='hidden' name='idMeta' value='$idMeta'>

@@ -108,12 +108,13 @@
             $valor = number_format($row['valor_despesa'], 2, ',', '.');
             $data = date("d/m/Y", strtotime($row['data_despesa']));
             $idDespesa = $row['id_despesa'];
+
             echo "
                 <tr>
-                    <td>$valor</td>
+                    <td>R$$valor</td>
                     <td>$data</td>
                     <td>
-                        <form action='excluiDespesaMeta.php' method='POST'>
+                        <form action='excluiDespesaMeta.php' method='POST' onsubmit='return confirm(\"Deseja realmente excluir esta alocação?\");'>
                             <input type='hidden' name='idMeta' value='$idMeta'>
                             <input type='hidden' name='idDespesa' value='$idDespesa'>
                             <input type='hidden' name='valor' value='$valor'>
