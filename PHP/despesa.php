@@ -283,15 +283,16 @@ echo "
         <tbody>
 ";
 
-error_reporting(0);
 $totalDespesas = 0;
 while ($despesa = mysqli_fetch_assoc($queryDespesas)) {
+  if(isset($despesa['fk_dependente'])){
     $idDependente = $despesa['fk_dependente'];
-    
+
     $selectDependente = "select * from dependente where id_dependente = $idDependente";
     $queryNomeDependente = mysqli_query($conn, $selectDependente);
     $buscaDependente = mysqli_fetch_assoc($queryNomeDependente);
     $nomeDependente = $buscaDependente['nome_dependente'] ?? '-';
+  }  
 
     $dataDespesa = date("d/m/Y", strtotime($despesa['data_despesa']));
     $nomeDespesa = htmlspecialchars($despesa['nome_despesa']);
@@ -366,8 +367,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (selectCategoria && inputNovaCategoria) {
         selectCategoria.addEventListener('change', function () {
-            // Sempre que o usuário mudar a categoria selecionada,
-            // limpamos o campo de nova categoria.
             inputNovaCategoria.value = '';
         });
     }
@@ -381,8 +380,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (selectPagameto && inputNovoPagamento) {
         selectPagameto.addEventListener('change', function () {
-            // Sempre que o usuário mudar a categoria selecionada,
-            // limpamos o campo de nova categoria.
             inputNovoPagamento.value = '';
         });
     }
@@ -468,10 +465,8 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 
 
- <!-- Bootstrap JS -->
  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-<!-- Script funcional -->
 <script>
   const tipoPagamento = document.getElementById("tipoPagamento");
   const novoTipoWrapper = document.getElementById("novoTipoWrapper");
@@ -514,25 +509,20 @@ document.addEventListener('DOMContentLoaded', function () {
 document.getElementById("filtro").addEventListener("submit", function(e) {
   e.preventDefault();
 
-  // Valores dos filtros
   const filtroValor = parseFloat(document.getElementById("filtroValor").value);
   const filtroMes = document.getElementById("filtroMes").value;
   const filtroDependente = document.getElementById("filtroDependente").value;
   const filtroCategoria = document.getElementById("filtroCategoria").value;
 
-  // Todas as linhas da tabela
   const linhas = document.querySelectorAll("#tabelaDespesas tbody tr");
 
   linhas.forEach(linha => {
-    // Valor na coluna 5 (índice 5)
     const valorTexto = linha.children[5].textContent.replace("R$", "").trim().replace(/\./g, "").replace(",", ".");
     const valor = parseFloat(valorTexto);
 
-    // Data na coluna 0 para pegar mês
     const data = linha.children[0].textContent.split("/");
     const mesLinha = data[1];
 
-    // Dependente na coluna 2 e categoria na coluna 3
     const dependenteLinha = linha.children[2].textContent.trim();
     const categoriaLinha = linha.children[3].textContent.trim();
 
@@ -541,15 +531,12 @@ document.getElementById("filtro").addEventListener("submit", function(e) {
     if (!isNaN(filtroValor) && valor < filtroValor) mostrar = false;
     if (filtroMes && filtroMes !== mesLinha) mostrar = false;
 
-    // Se filtroDependente não vazio, verifica se bate com o texto da célula
     if (filtroDependente && filtroDependente !== "") {
-      // Aqui vamos comparar pelo texto da célula, para isso precisamos do nome do dependente selecionado.
       const selectDep = document.getElementById("filtroDependente");
       const nomeFiltroDep = selectDep.options[selectDep.selectedIndex].text;
       if (dependenteLinha !== nomeFiltroDep) mostrar = false;
     }
 
-    // Mesmo para categoria
     if (filtroCategoria && filtroCategoria !== "") {
       const selectCat = document.getElementById("filtroCategoria");
       const nomeFiltroCat = selectCat.options[selectCat.selectedIndex].text;
@@ -574,7 +561,6 @@ document.getElementById("limparFiltros").addEventListener("click", function() {
 </script>
 
 
-<!-- FOOTER -->
 <footer class="mt-4">
 <div class="container text-center">
   <p class="mb-1">© 2025 Administra - Todos os direitos reservados</p>
