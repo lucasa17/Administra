@@ -285,15 +285,15 @@ echo "
 
 $totalDespesas = 0;
 while ($despesa = mysqli_fetch_assoc($queryDespesas)) {
-  if(isset($despesa['fk_dependente'])){
-    $idDependente = $despesa['fk_dependente'];
+   $nomeDependente = $despesa['fk_dependente'] ?? '-';
 
-    $selectDependente = "select * from dependente where id_dependente = $idDependente";
+  if($despesa['fk_dependente'] != null){
+    $idDependente = $despesa['fk_dependente'];
+    $selectDependente = "select * from dependente where id_dependente = $idDependente and fk_usuario = $id";
     $queryNomeDependente = mysqli_query($conn, $selectDependente);
     $buscaDependente = mysqli_fetch_assoc($queryNomeDependente);
-    $nomeDependente = $buscaDependente['nome_dependente'] ?? '-';
+    $nomeDependente = $buscaDependente['nome_dependente'];
   }  
-
     $dataDespesa = date("d/m/Y", strtotime($despesa['data_despesa']));
     $nomeDespesa = htmlspecialchars($despesa['nome_despesa']);
     $nomeCategoria = $despesa['nome_categoria'] ?? '-';
